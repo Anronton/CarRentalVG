@@ -1,0 +1,101 @@
+﻿@page "/"
+@using CarRental.Business.Classes
+@inject BookingProcessor b
+
+
+<PageTitle>Car Rental</PageTitle>
+
+<h1 class="text-center">Car Rental</h1>
+
+<div>
+    <div class="heading-font">Vehicles</div>
+    <table class="table border border-secondary">
+        <thead>
+            <tr>
+                <th scope="col">RegNo</th>
+                <th scope="col">Make</th>
+                <th scope="col">Odometer</th>
+                <th scope="col">Cost Km</th>
+                <th scope="col">Vehicle Type</th>
+                <th scope="col">$ Day</th>
+                <th scope="col">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var vehicle in b.GetVehicles())
+            {
+                <tr>
+                    <th scope="row" class="align-middle">@vehicle.RegNo</th>
+                    <td class="align-middle">@vehicle.Make</td>
+                    <td class="align-middle">@vehicle.Odometer</td>
+                    <td class="align-middle">@vehicle.CostKm</td>
+                    <td class="align-middle">@vehicle.VehicleType</td>
+                    <td class="align-middle">@vehicle.DayCost(vehicle.VehicleType)</td>
+                    <td>
+                        <label class=@(vehicle.VehicleStatus == Common.Enums.VehicleStatuses.Booked ? "btn-sm btn-danger" : "btn-sm btn-dark")>@vehicle.VehicleStatus</label>
+                    </td>                       
+                </tr>
+            }           
+        </tbody>
+    </table>
+</div>
+
+<div>
+    <div class="heading-font">Bookings</div>
+    <table class="table border border-secondary">
+        <thead>
+            <tr>
+                <th scope="col">RegNo</th>
+                <th scope="col">Customer</th>
+                <th scope="col">Km Rented</th>
+                <th scope="col">Km Returned</th>
+                <th scope="col">Rented</th>
+                <th scope="col">Returned</th>
+                <th scope="col">Cost</th>
+                <th scope="col">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var booking in b.GetBookings())
+            {
+                <tr>
+                    <th scope="row" class="align-middle">@booking.Vehicle.RegNo</th>
+                    <td class="align-middle">@($"{booking.Person.FirstName} {booking.Person.LastName} ({booking.Person.CustomerId})")</td>
+                    <td class="align-middle">@booking.InitialOdometer</td>
+                    <td class="align-middle">@booking.ReturnOdometer</td>
+                    <td class="align-middle">@booking.BookingDate.ToShortDateString()</td>
+                    <td class="align-middle">@(booking.ReturnDate?.ToShortDateString() ?? "")</td>
+                    <td class="align-middle">@booking.TotalCost</td>
+                    <td>
+                        <label class=@(booking.VehicleBookingStatus == Common.Enums.VehicleBookingStatuses.Closed ? "btn-sm btn-danger" : "btn-sm btn-success")>@booking.VehicleBookingStatus</label>
+                    </td>
+                </tr> 
+            }
+        </tbody>
+    </table>
+</div>
+
+<div class="col-6">
+    <div class="heading-font">Customers</div>
+    <table class="table border border-secondary">
+        <thead>
+            <tr>
+                <th scope="col">SSN</th>
+                <th scope="col">Last Name</th>
+                <th scope="col">First Name</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach(var person in b.GetPersons())
+            {
+                <tr>
+                    <th scope="row">@person.CustomerId</th>
+                    <td>@person.LastName</td>
+                    <td>@person.FirstName</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+
