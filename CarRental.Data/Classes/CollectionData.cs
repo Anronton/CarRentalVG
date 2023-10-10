@@ -10,6 +10,12 @@ public class CollectionData : IData
     readonly List<IVehicle> _vehicles = new List<IVehicle>();
     readonly List<IBooking> _bookings = new List<IBooking>();
 
+    //här så ska vi skapa idn, något som databasen oftast bidrar med, Dessa måste ha Id-properties för detta
+
+    //public int NextVehicleId => _vehicles.Count.Equals(0) ? 1 : _vehicles.Max(b => b.Id) + 1;
+    //public int NextPersonId => _persons.Count.Equals(0) ? 1 : _persons.Max(b => b.Id) + 1;
+    //public int NextBookingId => _bookings.Count.Equals(0) ? 1 : _bookings.Max(b => b.Id) + 1;
+
     public CollectionData() => SeedData();
 
     void SeedData()
@@ -70,6 +76,10 @@ public class CollectionData : IData
         */
     }
     
+    //Här kommer vi att behöva flera metoder såsom RentVehicle, ReturnVehicle osv
+    //Dessa tre metoder kommer vi inte att då ha kvar, Vi kommer att ha en Get() som hämtar flera stycken och ska ha lambda-uttryck som vi skickar in i parentesen
+    //Lambda uttrycket ska filtrera på våra listor. Get med LinQ. Och en single som hämtar en grej. Get() ska vara generisk, både single och listan.
+    // Och en generisk som heter add. Så minst tre generiska metoder, Get Single och Add som fungerar i flera olika sammanhang.
     public IEnumerable<IPerson> GetPersons() => _persons;
     public IEnumerable<IBooking> GetBookings() => _bookings;
     public IEnumerable<IVehicle> GetVehicles(VehicleStatuses status = default) => _vehicles;

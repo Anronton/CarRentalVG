@@ -7,9 +7,13 @@
 
 <h1>Car Rental</h1>
 
+@*<div class="alert alert-danger" role="alert">
+    A simple danger alert—check it out!
+</div>*@
+
 <div>
     <div class="heading-font">Vehicles</div>
-    <table class="table border border-secondary">
+    <table class="table border"> @*border-secondary*@
         <thead>
             <tr>
                 <th scope="col">RegNo</th>
@@ -18,10 +22,21 @@
                 <th scope="col">Cost Km</th>
                 <th scope="col">Vehicle Type</th>
                 <th scope="col">$ Day</th>
+                <th scope="col">Action</th>
+                <th></th>
                 <th scope="col">Status</th>
             </tr>
         </thead>
         <tbody>
+            <tr>
+                <td><input class="form-control" placeholder="RegNo" /></td>
+                <td><input class="form-control" placeholder="Make" /></td>
+                <td><input class="form-control" placeholder="0" /></td>
+                <td><input class="form-control" placeholder="0" /></td>
+                <td><input class="dropdown" /></td>
+                <td></td>
+                <td><button class="btn-sm">Add</button></td>
+            </tr>
             @foreach (var vehicle in b.GetVehicles())
             {
                 <tr>
@@ -31,6 +46,8 @@
                     <td class="align-middle">@vehicle.CostKm</td>
                     <td class="align-middle">@vehicle.VehicleType</td>
                     <td class="align-middle">@vehicle.DayCost(vehicle.VehicleType)</td>
+                    <td><input class="form-control" /></td> <!-- Dropdown eller mata in distance -->
+                    <td><button class="btn-sm">re/r</button></td> <!-- Knapp som skiftar mellan return och rent -->
                     <td>
                         <label class=@(vehicle.VehicleStatus == Common.Enums.VehicleStatuses.Booked ? "btn-sm btn-danger" : "btn-sm btn-dark")>@vehicle.VehicleStatus</label>
                     </td>                       
@@ -83,9 +100,14 @@
                 <th scope="col">SSN</th>
                 <th scope="col">Last Name</th>
                 <th scope="col">First Name</th>
-            </tr>
+            </tr>          
         </thead>
         <tbody>
+            <tr>
+                <td><input class="form-control" placeholder="SSN"/></td>
+                <td><input class="form-control" placeholder="Last Name" /></td>
+                <td><input class="form-control" placeholder="First Name" /></td>
+            </tr>
             @foreach(var person in b.GetPersons())
             {
                 <tr>
