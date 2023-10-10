@@ -5,26 +5,26 @@
 
 <PageTitle>Car Rental</PageTitle>
 
-<h1>Car Rental</h1>
+<h1 class="display-3">Car Rental</h1>
 
 @*<div class="alert alert-danger" role="alert">
     A simple danger alert—check it out!
 </div>*@
 
 <div>
-    <div class="heading-font">Vehicles</div>
+    <div class="heading-font display-6">Vehicles</div>
     <table class="table border"> @*border-secondary*@
         <thead>
             <tr>
-                <th scope="col">RegNo</th>
-                <th scope="col">Make</th>
-                <th scope="col">Odometer</th>
-                <th scope="col">Cost Km</th>
-                <th scope="col">Vehicle Type</th>
-                <th scope="col">$ Day</th>
-                <th scope="col">Action</th>
-                <th></th>
-                <th scope="col">Status</th>
+                <th scope="col" class="bg-black text-secondary">RegNo</th>
+                <th scope="col" class="bg-black text-secondary">Make</th>
+                <th scope="col" class="bg-black text-secondary">Odometer</th>
+                <th scope="col" class="bg-black text-secondary">Cost Km</th>
+                <th scope="col" class="bg-black text-secondary">Vehicle Type</th>
+                <th scope="col" class="bg-black text-secondary">$ Day</th>
+                <th scope="col" class="bg-black text-secondary">Action</th>
+                <th class="bg-black text-secondary"></th>
+                <th scope="col" class="bg-black text-secondary">Status</th>
             </tr>
         </thead>
         <tbody>
@@ -58,18 +58,18 @@
 </div>
 
 <div>
-    <div class="heading-font">Bookings</div>
+    <div class="heading-font display-6">Bookings</div>
     <table class="table border border-secondary">
         <thead>
             <tr>
-                <th scope="col">RegNo</th>
-                <th scope="col">Customer</th>
-                <th scope="col">Km Rented</th>
-                <th scope="col">Km Returned</th>
-                <th scope="col">Rented</th>
-                <th scope="col">Returned</th>
-                <th scope="col">Cost</th>
-                <th scope="col">Status</th>
+                <th scope="col" class="bg-black text-secondary">RegNo</th>
+                <th scope="col" class="bg-black text-secondary">Customer</th>
+                <th scope="col" class="bg-black text-secondary">Km Rented</th>
+                <th scope="col" class="bg-black text-secondary">Km Returned</th>
+                <th scope="col" class="bg-black text-secondary">Rented</th>
+                <th scope="col" class="bg-black text-secondary">Returned</th>
+                <th scope="col" class="bg-black text-secondary">Cost</th>
+                <th scope="col" class="bg-black text-secondary">Status</th>
             </tr>
         </thead>
         <tbody>
@@ -93,13 +93,14 @@
 </div>
 
 <div class="col-6">
-    <div class="heading-font">Customers</div>
+    <div class="heading-font display-6">Customers</div>
     <table class="table border border-secondary">
         <thead>
             <tr>
-                <th scope="col">SSN</th>
-                <th scope="col">Last Name</th>
-                <th scope="col">First Name</th>
+                <th scope="col" class="bg-black text-secondary">SSN</th>
+                <th scope="col" class="bg-black text-secondary">Last Name</th>
+                <th scope="col" class="bg-black text-secondary">First Name</th>
+                <th class="bg-black text-secondary"></th>
             </tr>          
         </thead>
         <tbody>
@@ -107,6 +108,7 @@
                 <td><input class="form-control" placeholder="SSN"/></td>
                 <td><input class="form-control" placeholder="Last Name" /></td>
                 <td><input class="form-control" placeholder="First Name" /></td>
+                <td><button class="btn-sm">Add</button></td>
             </tr>
             @foreach(var person in b.GetPersons())
             {
@@ -114,10 +116,9 @@
                     <th scope="row">@person.CustomerId</th>
                     <td>@person.LastName</td>
                     <td>@person.FirstName</td>
+                    <td></td>
                 </tr>
             }
         </tbody>
     </table>
 </div>
-
-
