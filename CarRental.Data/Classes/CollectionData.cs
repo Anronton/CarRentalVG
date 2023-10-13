@@ -80,6 +80,11 @@ public class CollectionData : IData
     //Dessa tre metoder kommer vi inte att då ha kvar, Vi kommer att ha en Get() som hämtar flera stycken och ska ha lambda-uttryck som vi skickar in i parentesen
     //Lambda uttrycket ska filtrera på våra listor. Get med LinQ. Och en single som hämtar en grej. Get() ska vara generisk, både single och listan.
     // Och en generisk som heter add. Så minst tre generiska metoder, Get Single och Add som fungerar i flera olika sammanhang.
+
+    public void AddCustomer(IPerson customer)
+    {
+        _persons.Add(customer);
+    }
     public IEnumerable<IPerson> GetPersons() => _persons;
     public IEnumerable<IBooking> GetBookings() => _bookings;
     public IEnumerable<IVehicle> GetVehicles(VehicleStatuses status = default) => _vehicles;

@@ -106,10 +106,10 @@
         </thead>
         <tbody>
             <tr>
-                <td><input class="form-control" placeholder="SSN"/></td>
-                <td><input class="form-control" placeholder="Last Name" /></td>
-                <td><input class="form-control" placeholder="First Name" /></td>
-                <td><button class="btn-sm">Add</button></td>
+                <td><input @bind="customerId" class="form-control" placeholder="SSN"/></td>
+                <td><input @bind="lastName"class="form-control" placeholder="Last Name" /></td>
+                <td><input @bind="firstName" class="form-control" placeholder="First Name" /></td>
+                <td><button @onclick="AddCtustomerToData" class="btn-sm">Add</button></td>
             </tr>
             @foreach(var person in b.GetPersons())
             {
@@ -123,3 +123,19 @@
         </tbody>
     </table>
 </div>
+
+@code{
+    private int? customerId;
+    private string? lastName;
+    private string? firstName;
+
+
+
+    private void AddCtustomerToData()
+    {
+        b.AddCustomer(customerId ?? 0, lastName, firstName);
+        customerId = null;
+        lastName = "";
+        firstName = "";
+    }
+}

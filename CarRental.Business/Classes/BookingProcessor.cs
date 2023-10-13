@@ -1,4 +1,5 @@
-﻿using CarRental.Common.Interfaces;
+﻿using CarRental.Common.Classes;
+using CarRental.Common.Interfaces;
 
 namespace CarRental.Business.Classes;
 
@@ -27,5 +28,10 @@ public class BookingProcessor
     //public IBooking ReturnVehicle(int vehicleId, double distance){}
 
     //public void AddVehicle(string make, string regNo, double odomer osv.osv..)
-    //public void AddCustomer(string customerId, string firstName, string lastName)
+    public void AddCustomer(int customerId, string firstName, string lastName)
+    {
+        var customer = new Customer(customerId, firstName, lastName);
+
+        _data.AddCustomer(customer);
+    }
 }
