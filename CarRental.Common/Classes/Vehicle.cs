@@ -26,7 +26,4 @@ public abstract class Vehicle : IVehicle
         VehicleType = vehicleType;
         VehicleStatus = vehicleStatus;
     }
-
-    public abstract double DayCost(VehicleTypes vehicleType);
-
 }

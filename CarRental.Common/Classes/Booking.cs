@@ -1,4 +1,5 @@
 ﻿using CarRental.Common.Enums;
+using CarRental.Common.Extensions;
 using CarRental.Common.Interfaces;
 
 namespace CarRental.Common.Classes;
@@ -30,7 +31,7 @@ public class Booking : IBooking
         if (ReturnDate.HasValue)
         {
             double odometerDifference = ReturnOdometer.HasValue ? ReturnOdometer.Value - InitialOdometer : 0;
-            TotalCost = (ReturnDate.Value - BookingDate).TotalDays * Vehicle.DayCost(Vehicle.VehicleType) + odometerDifference * Vehicle.CostKm;
+            TotalCost = (ReturnDate.Value - BookingDate).TotalDays * Vehicle.DayCost() + odometerDifference * Vehicle.CostKm;
         }
         else
         {

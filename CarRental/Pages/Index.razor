@@ -1,4 +1,5 @@
 ﻿@page "/"
+@using CarRental.Common.Extensions
 @using CarRental.Business.Classes
 @inject BookingProcessor b
 
@@ -45,7 +46,7 @@
                     <td class="align-middle">@vehicle.Odometer</td>
                     <td class="align-middle">@vehicle.CostKm</td>
                     <td class="align-middle">@vehicle.VehicleType</td>
-                    <td class="align-middle">@vehicle.DayCost(vehicle.VehicleType)</td>
+                    <td class="align-middle">@vehicle.DayCost()</td>
                     <td><input class="form-control" /></td> <!-- Dropdown eller mata in distance -->
                     <td><button class="btn-sm">re/r</button></td> <!-- Knapp som skiftar mellan return och rent -->
                     <td>

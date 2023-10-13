@@ -9,6 +9,5 @@ public interface IVehicle
     public int Odometer { get; set; }
     public double CostKm { get; init; }
     public VehicleTypes VehicleType { get; init; }
-    public double DayCost(VehicleTypes vehicleType);
     public VehicleStatuses VehicleStatus { get; set; }
 }

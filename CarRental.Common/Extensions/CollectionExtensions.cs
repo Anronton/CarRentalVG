@@ -8,4 +8,5 @@ namespace CarRental.Common.Extensions;
 
 public static class CollectionExtensions
 {
+    //Får hitta på något här senare!
 }
