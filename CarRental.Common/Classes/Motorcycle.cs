@@ -3,20 +3,16 @@ using CarRental.Common.Interfaces;
 
 namespace CarRental.Common.Classes;
 
-public class Motorcycle : IVehicle
+public class Motorcycle : Vehicle
 {
-    public string RegNo { get; init; }
-    public string Make { get; init; }
-    public int Odometer { get; set; }
-    public double CostKm { get; init; }
-    public VehicleTypes VehicleType { get; init; }
-    public VehicleStatuses VehicleStatus { get; set; }
-
-    public Motorcycle(string regNo, string make, int odometer, double costKm, VehicleTypes vehicleType, VehicleStatuses vehicleStatus) =>
-        (RegNo, Make, Odometer, CostKm, VehicleType, VehicleStatus) = (regNo, make, odometer, costKm, vehicleType, vehicleStatus);
 
 
-    public double DayCost(VehicleTypes vehicleType)
+    public Motorcycle(string regNo, string make, int odometer, double costKm, VehicleTypes vehicleType, VehicleStatuses vehicleStatus) :
+        base(regNo, make, odometer, costKm, vehicleType, vehicleStatus)
+    { }
+
+
+    public override double DayCost( VehicleTypes vehicleType)
     {
         switch (vehicleType)
         {
