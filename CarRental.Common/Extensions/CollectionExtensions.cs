@@ -8,5 +8,6 @@ namespace CarRental.Common.Extensions;
 
 public static class CollectionExtensions
 {
-    //Får hitta på något här senare!
+    //Får hitta på något här senare! Kanske beräkning av totalkostnad?
+
 }

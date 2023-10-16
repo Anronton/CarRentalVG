@@ -37,6 +37,8 @@
                 <td><input class="dropdown" /></td>
                 <td></td>
                 <td><button class="btn-sm">Add</button></td>
+                <td></td>
+                @*<td><label class="btn-sm btn-warning text-light">Processing</label></td>*@
             </tr>
             @foreach (var vehicle in b.GetVehicles())
             {
@@ -83,7 +85,9 @@
                     <td class="align-middle">@booking.ReturnOdometer</td>
                     <td class="align-middle">@booking.BookingDate.ToShortDateString()</td>
                     <td class="align-middle">@(booking.ReturnDate?.ToShortDateString() ?? "")</td>
-                    <td class="align-middle">@booking.TotalCost</td>
+                    <td class="align-middle">
+                    @{if (booking.TotalCost != null){@booking.TotalCost.Value.ToString("F2")} }
+                    </td>
                     <td>
                         <label class=@(booking.VehicleBookingStatus == Common.Enums.VehicleBookingStatuses.Closed ? "btn-sm btn-danger" : "btn-sm btn-success")>@booking.VehicleBookingStatus</label>
                     </td>
@@ -109,7 +113,7 @@
                 <td><input @bind="customerId" class="form-control" placeholder="SSN"/></td>
                 <td><input @bind="lastName"class="form-control" placeholder="Last Name" /></td>
                 <td><input @bind="firstName" class="form-control" placeholder="First Name" /></td>
-                <td><button @onclick="AddCtustomerToData" class="btn-sm">Add</button></td>
+                <td><button @onclick="AddCustomerToData" class="btn-sm">Add</button></td>
             </tr>
             @foreach(var person in b.GetPersons())
             {
@@ -131,11 +135,14 @@
 
 
 
-    private void AddCtustomerToData()
+    private void AddCustomerToData()
     {
-        b.AddCustomer(customerId ?? 0, lastName, firstName);
-        customerId = null;
-        lastName = "";
-        firstName = "";
+        if(customerId != null && lastName != null && firstName != null )
+        {
+            b.AddCustomer(customerId.Value, lastName, firstName);
+            customerId = null;
+            lastName = "";
+            firstName = "";
+        }
     }
 }

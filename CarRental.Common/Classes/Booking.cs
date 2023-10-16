@@ -6,6 +6,7 @@ namespace CarRental.Common.Classes;
 
 public class Booking : IBooking
 {
+    public int Id { get; set; }
     public IVehicle Vehicle { get; init; }
     public IPerson Person { get; init; }
     public int InitialOdometer { get; init; }

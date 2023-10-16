@@ -15,7 +15,7 @@ public static class VehicleExtensions
     public static double DayCost(this IVehicle vehicle)
     {
         if (vehicle == null) 
-            throw new ArgumentException(nameof(vehicle));
+            throw new ArgumentException(null, nameof(vehicle));
         
         switch (vehicle.VehicleType)
         { 

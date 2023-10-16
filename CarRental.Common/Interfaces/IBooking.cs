@@ -5,12 +5,13 @@ namespace CarRental.Common.Interfaces;
 
  public interface IBooking
 {
-    IVehicle Vehicle { get; init; }
-    IPerson Person { get; init; }
-    int InitialOdometer { get; init; }
-    int? ReturnOdometer { get; set; }
-    DateTime BookingDate { get; init; }
-    DateTime? ReturnDate { get; set; }
-    double? TotalCost { get; set; }
-    VehicleBookingStatuses VehicleBookingStatus { get; set; }   
+    public int Id { get; set; }
+    public IVehicle Vehicle { get; init; }
+    public IPerson Person { get; init; }
+    public int InitialOdometer { get; init; }
+    public int? ReturnOdometer { get; set; }
+    public DateTime BookingDate { get; init; }
+    public DateTime? ReturnDate { get; set; }
+    public double? TotalCost { get; set; }
+    public VehicleBookingStatuses VehicleBookingStatus { get; set; }   
 }
