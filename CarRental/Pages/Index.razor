@@ -1,6 +1,7 @@
 ﻿@page "/"
 @using CarRental.Common.Extensions
-@using CarRental.Business.Classes
+@using CarRental.Business.Classes 
+@using CarRental.Common.Enums
 @inject BookingProcessor b
 
 
@@ -14,7 +15,7 @@
 
 <div>
     <div class="heading-font display-6">Vehicles</div>
-    <table class="table border"> @*border-secondary*@
+    <table class="table border">
         <thead>
             <tr>
                 <th scope="col" class="bg-black text-secondary">RegNo</th>
@@ -30,13 +31,21 @@
         </thead>
         <tbody>
             <tr>
-                <td><input class="form-control" placeholder="RegNo" /></td>
-                <td><input class="form-control" placeholder="Make" /></td>
-                <td><input class="form-control" placeholder="0" /></td>
-                <td><input class="form-control" placeholder="0" /></td>
-                <td><input class="dropdown" /></td>
+                <td><input class="form-control" placeholder="RegNo" @bind="RegNo" /></td>
+                <td><input class="form-control" placeholder="Make" @bind="Make" /></td>
+                <td><input class="form-control" placeholder="0" @bind="Odometer" /></td>
+                <td><input class="form-control" placeholder="0" @bind ="CostKm" /></td>
+                <td>
+                    <select class="form-control" @bind="VehicleType">
+                        <option value="">Select Type </option>
+                        @foreach (var typeName in VehicleTypeOptions)
+                        {
+                            <option value="@typeName">@typeName</option>
+                        }
+                    </select>
+                </td>
                 <td></td>
-                <td><button class="btn-sm">Add</button></td>
+                <td><button @onclick="AddVehicleToData" class="btn-sm">Add</button></td>
                 <td></td>
                 @*<td><label class="btn-sm btn-warning text-light">Processing</label></td>*@
             </tr>
@@ -129,11 +138,33 @@
 </div>
 
 @code{
+    private string? RegNo;
+    private string? Make;
+    private double? Odometer;
+    private double? CostKm;
+    private VehicleTypes? VehicleType;
+    private List<VehicleTypes> VehicleTypeOptions = Enum.GetValues(typeof(VehicleTypes)).Cast<VehicleTypes>().ToList();
+
+
     private int? customerId;
     private string? lastName;
     private string? firstName;
 
+    private void AddVehicleToData()
+    {
+        if(!string.IsNullOrWhiteSpace(RegNo) && !string.IsNullOrWhiteSpace(Make) && Odometer.HasValue && CostKm.HasValue && VehicleType.HasValue)
+        {
 
+            b.AddVehicle(RegNo, Make, Odometer.Value, CostKm.Value, VehicleType.Value);
+
+            RegNo = "";
+            Make = "";
+            Odometer = null;
+            CostKm = null;
+            VehicleType = null;
+        }
+
+    }
 
     private void AddCustomerToData()
     {

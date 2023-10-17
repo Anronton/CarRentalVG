@@ -1,4 +1,5 @@
 ﻿using CarRental.Common.Classes;
+using CarRental.Common.Enums;
 using CarRental.Common.Interfaces;
 using System.Linq.Expressions;
 
@@ -13,10 +14,6 @@ public class BookingProcessor
         _data = data;
     }
 
-    //Här kommer vi att behöva lägga till några fler metoder, dessa kan vara kvar och vi kan lägga till tex varje single också
-    //Men här ska vi anropa de tre generiska metoderna i CollectionData med LinQ-uttrycken.
-    //Så här är det fritt fram att ha flera metoder. Så här visar vi hur vi jobbar med de genriska metoderna i datalagret.
-    //Sen så är det valfritt att även göra dessa generiska.
     public IEnumerable<T> GetItems<T>(Expression<Func<T, bool>>? expression = null)
     {
         return _data.Get(expression);
@@ -31,6 +28,7 @@ public class BookingProcessor
     {
         return GetItems(expression);
     } 
+
     //public IPerson? GetPerson(string customerId){}
     public IEnumerable<IVehicle> GetVehicles(Expression<Func<IVehicle, bool>>? expression = null)
     {
@@ -49,7 +47,34 @@ public class BookingProcessor
     //public async Task<IBooking> RentVehicle(int vehicleIdm int customerId){}
     //public IBooking ReturnVehicle(int vehicleId, double distance){}
 
-    //public void AddVehicle(string make, string regNo, double odomer osv.osv..)
+
+    public void AddVehicle(string regNo, string make, double odometer, double costKm, VehicleTypes vehicleType)
+    {
+        IVehicle vehicle;
+
+        if (vehicleType == VehicleTypes.Sedan)
+        {
+            vehicle = new Car(regNo, make, odometer, costKm, VehicleTypes.Sedan, VehicleStatuses.Available);
+        }
+        else if (vehicleType == VehicleTypes.Combi)
+        {
+            vehicle = new Car(regNo, make, odometer, costKm, VehicleTypes.Combi, VehicleStatuses.Available);
+        }
+        else if (vehicleType == VehicleTypes.Van)
+        {
+            vehicle = new Car(regNo, make, odometer, costKm, VehicleTypes.Van, VehicleStatuses.Available);
+        }
+        else if (vehicleType == VehicleTypes.Motorcycle)
+        {
+            vehicle = new Motorcycle(regNo, make, odometer, costKm, VehicleTypes.Motorcycle, VehicleStatuses.Available);
+        }
+        else
+        {
+            throw new Exception();
+        }
+        AddItem(vehicle);
+        
+    }
     public void AddCustomer(int customerId, string firstName, string lastName)
     {
         IPerson customer = new Customer(customerId, firstName, lastName);

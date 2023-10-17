@@ -86,6 +86,14 @@ public class CollectionData : IData
     {
         _persons.Add(customer);
     }
+
+    public void AddVehicle(IVehicle vehicle)
+    {
+        _vehicles.Add(vehicle);
+    }
+
+
+
     public void Add<T>(T item)
     {
         if (item is IVehicle vehicle)
@@ -161,8 +169,8 @@ public class CollectionData : IData
 
     }
 
-    public IEnumerable<IPerson> GetPersons() => _persons;
-    public IEnumerable<IBooking> GetBookings() => _bookings;
+    //public IEnumerable<IPerson> GetPersons() => _persons;
+    //public IEnumerable<IBooking> GetBookings() => _bookings;
     public IEnumerable<IVehicle> GetVehicles(VehicleStatuses status = default)
     {
         if(status != default)
