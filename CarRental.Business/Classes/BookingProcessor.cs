@@ -57,15 +57,51 @@ public class BookingProcessor
         return GetItems(expression);
     }
 
-    /* public IBooking GetBooking(int vehicleId)
+    public IBooking? GetBooking(int bookingId)
     {
+        var bookings = _data.Get<IBooking>(b => b.Id == bookingId);
+        return bookings.SingleOrDefault();
+    } 
 
-    } */
 
+    //Denna ska vi jobba med näst! Testar med att göra den icke async för att testa så att all logik fungerar.
     //public async Task<IBooking> RentVehicle(int vehicleIdm int customerId){}
 
 
-    //public IBooking ReturnVehicle(int vehicleId, double distance){}
+    public IBooking ReturnVehicle(int vehicleId, int distance)
+    {
+        
+        var booking = _data.Get<IBooking>(b => b.Id == vehicleId).SingleOrDefault();
+
+        if (booking == null)
+        {
+            throw new Exception("Booking not found");
+        }
+
+        if (booking.VehicleBookingStatus != VehicleBookingStatuses.Open)
+        {
+            throw new Exception("Booking is not in an open state");
+        }
+
+        booking.ReturnVehicle(distance, DateTime.Now);
+
+        _data.Add(booking);
+
+        var vehicle = _data.Get<IVehicle>(v => v.Id == vehicleId).SingleOrDefault();
+
+        if (vehicle != null)
+        {
+            vehicle.VehicleStatus = VehicleStatuses.Available;
+            vehicle.Odometer = booking.Distance;
+
+            _data.Add(vehicle);
+        }
+        else
+        {
+            throw new Exception("Vehicle not found");
+        }
+        return booking;
+    }
 
     public void AddVehicle(string regNo, string make, double odometer, double costKm, VehicleTypes vehicleType)
     {
@@ -101,23 +137,17 @@ public class BookingProcessor
     }
 
     public string[] VehicleStatusNames => _data.VehicleStatusNames;
-   
     public string[] VehicleTypeNames => _data.VehicleTypeNames;
+    public VehicleTypes GetVehicleType(string name) => _data.GetVehicleType(name);
 
     public string[] GetVehicleTypeNames()
     {
         return _data.VehicleTypeNames;
     }
 
-
     public VehicleTypes[] GetVehicleTypes()
     {
         return Enum.GetValues(typeof(VehicleTypes)).Cast<VehicleTypes>().ToArray();
     }
-
-
-
-    public VehicleTypes GetVehicleType(string name) => _data.GetVehicleType(name); // och denna
-
 
 }

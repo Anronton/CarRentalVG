@@ -90,8 +90,8 @@
                 <tr>
                     <th scope="row" class="align-middle">@booking.Vehicle.RegNo</th>
                     <td class="align-middle">@($"{booking.Person.FirstName} {booking.Person.LastName} ({booking.Person.CustomerId})")</td>
-                    <td class="align-middle">@booking.InitialOdometer</td>
-                    <td class="align-middle">@booking.ReturnOdometer</td>
+                    <td class="align-middle">@booking.Odometer</td>
+                    <td class="align-middle">@booking.Distance</td>
                     <td class="align-middle">@booking.BookingDate.ToShortDateString()</td>
                     <td class="align-middle">@(booking.ReturnDate?.ToShortDateString() ?? "")</td>
                     <td class="align-middle">
@@ -143,8 +143,8 @@
     private double? Odometer;
     private double? CostKm;
     private string? SelectedVehicleType;
-    private string[]? vehicleTypeNames;
-    
+    //private string[]? vehicleTypeNames;
+                                            //Aja, näst ska vi se till att det går att göra bokningar! Kanske testa lite ifrån SeedData?
     
     private int? customerId;
     private string? lastName;

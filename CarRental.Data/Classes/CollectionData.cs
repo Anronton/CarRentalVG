@@ -78,17 +78,60 @@ public class CollectionData : IData
     }
 
    
-    
      
     public IBooking RentVehicle(int VehicleId, int customerId)
     {
-        throw new NotImplementedException();
-    }
+        IVehicle vehicle = _vehicles.SingleOrDefault(v => v.Id == VehicleId);
+        IPerson customer = _persons.SingleOrDefault(p => p.Id == customerId);
+
+        if (vehicle != null && customer != null)
+        {
+            if(vehicle.VehicleStatus == VehicleStatuses.Available)
+            {
+                IBooking booking = new Booking(vehicle, customer, (int)vehicle.Odometer, DateTime.Now, VehicleBookingStatuses.Open);
+
+                vehicle.VehicleStatus = VehicleStatuses.Booked;
+
+                _bookings.Add(booking);
+            }
+            else
+            {
+                throw new Exception("Vehicle not available for rent");
+            }
+        }
+        return null;
+    } // Denna
 
     public IBooking ReturnVehicle(int VehicleId)
     {
-        throw new NotImplementedException();
-    }
+        IVehicle vehicle = _vehicles.SingleOrDefault(v => v.Id == VehicleId);
+
+        if (vehicle != null)
+        {
+            if (vehicle.VehicleStatus == VehicleStatuses.Booked)
+            {
+                IBooking booking = _bookings.SingleOrDefault(b => b.Vehicle ==  vehicle && b.VehicleBookingStatus == VehicleBookingStatuses.Open);
+
+                if (booking != null)
+                {
+                    booking.RentVehicle(vehicle, booking.Person, (int)vehicle.Odometer, DateTime.Now);
+
+                    vehicle.VehicleStatus = VehicleStatuses.Available;
+
+                    vehicle.Odometer = booking.Distance;
+
+                    return booking;
+                }
+                else throw new Exception("Booking not found");
+            }
+            else {
+                throw new Exception();
+            }
+            
+        }
+        return null;
+    } // Och denna är viktiga att fortsätta med!
+
 
     public void AddCustomer(IPerson customer)
     {

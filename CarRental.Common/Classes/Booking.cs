@@ -9,32 +9,32 @@ public class Booking : IBooking
     public int Id { get; set; }
     public IVehicle Vehicle { get; init; }
     public IPerson Person { get; init; }
-    public int InitialOdometer { get; init; }
-    public int? ReturnOdometer { get; set; }
+    public int Odometer { get; init; }
+    public int Distance { get; set; }
     public DateTime BookingDate { get; init; }
     public DateTime? ReturnDate { get; set; }
     public double? TotalCost { get; set; }
     public VehicleBookingStatuses VehicleBookingStatus { get; set; }
 
-    public Booking(IVehicle vehicle, IPerson person, int initialOdometer, DateTime bookingDate, VehicleBookingStatuses vehicleBookingStatus)
+    public Booking(IVehicle vehicle, IPerson person, int odometer, DateTime bookingDate, VehicleBookingStatuses vehicleBookingStatus)
     {
         Vehicle = vehicle;
         Person = person;
-        InitialOdometer = initialOdometer;
+        Odometer = odometer;
         BookingDate = bookingDate;
         VehicleBookingStatus = vehicleBookingStatus;
     }
 
 
 
-    public void RentVehicle(IVehicle vehicle, IPerson person, int initialOdometer, DateTime bookingDate)
+    public void RentVehicle(IVehicle vehicle, IPerson person, int odometer, DateTime bookingDate)
     {
-
+        throw new NotImplementedException();
     }
 
-    public void ReturnVehicle(int returnOdometer, DateTime returnDate)
+    public void ReturnVehicle(int distance, DateTime returnDate)
     {
-        ReturnOdometer = returnOdometer;
+        Distance = distance;
         ReturnDate = returnDate;
         CalculateTotalCost();
         VehicleBookingStatus = VehicleBookingStatuses.Closed;
@@ -47,20 +47,12 @@ public class Booking : IBooking
     {
         if (ReturnDate.HasValue)
         {
-            double odometerDifference = ReturnOdometer.HasValue ? ReturnOdometer.Value - InitialOdometer : 0;
-            TotalCost = (ReturnDate.Value - BookingDate).TotalDays * Vehicle.DayCost() + odometerDifference * Vehicle.CostKm;
+            int distance = Distance - Odometer;
+            TotalCost = (ReturnDate.Value - BookingDate).TotalDays * Vehicle.DayCost() + distance * Vehicle.CostKm;
         }
         else
         {
             TotalCost = null;
         }
     }
-
-    /*public void CloseBooking(int returnOdometer, DateTime returnDate)
-    {
-        ReturnOdometer = returnOdometer;
-        ReturnDate = returnDate;
-        CalculateTotalCost();
-        VehicleBookingStatus = VehicleBookingStatuses.Closed;
-    }*/
 }
