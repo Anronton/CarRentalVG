@@ -56,14 +56,16 @@ public class BookingProcessor
     {
         return GetItems(expression);
     }
+
     /* public IBooking GetBooking(int vehicleId)
     {
 
     } */
 
     //public async Task<IBooking> RentVehicle(int vehicleIdm int customerId){}
-    //public IBooking ReturnVehicle(int vehicleId, double distance){}
 
+
+    //public IBooking ReturnVehicle(int vehicleId, double distance){}
 
     public void AddVehicle(string regNo, string make, double odometer, double costKm, VehicleTypes vehicleType)
     {
@@ -98,31 +100,24 @@ public class BookingProcessor
         AddItem(customer);
     }
 
-    public string[] VehicleStatusNames => Enum.GetNames(typeof(VehicleStatuses));
-    public string[] VehicleTypeNames => Enum.GetNames(typeof(VehicleTypes));
+    public string[] VehicleStatusNames => _data.VehicleStatusNames;
+   
+    public string[] VehicleTypeNames => _data.VehicleTypeNames;
 
-    
     public string[] GetVehicleTypeNames()
     {
         return _data.VehicleTypeNames;
     }
 
-    public VehicleTypes GetVehicleType(string name)
-    {
-        if (Enum.TryParse(name, true, out VehicleTypes vehicleType))
-        {
-            return vehicleType;
-        }
-        return default; //throw new ArgumentException("Invalid vehicle type name")
-    }
 
     public VehicleTypes[] GetVehicleTypes()
     {
         return Enum.GetValues(typeof(VehicleTypes)).Cast<VehicleTypes>().ToArray();
     }
-    
 
-    //public VehicleTypes GetVehicleType(string name) => _data.GetVehicleType(name);
-        
+
+
+    public VehicleTypes GetVehicleType(string name) => _data.GetVehicleType(name); // och denna
+
 
 }
