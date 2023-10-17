@@ -1,7 +1,6 @@
 ﻿@page "/"
 @using CarRental.Common.Extensions
 @using CarRental.Business.Classes 
-@using CarRental.Common.Enums
 @inject BookingProcessor b
 
 
@@ -36,9 +35,9 @@
                 <td><input class="form-control" placeholder="0" @bind="Odometer" /></td>
                 <td><input class="form-control" placeholder="0" @bind ="CostKm" /></td>
                 <td>
-                    <select class="form-control" @bind="VehicleType">
-                        <option value="">Select Type </option>
-                        @foreach (var typeName in VehicleTypeOptions)
+                    <select class="form-control" @bind="SelectedVehicleType">
+                        <option value="">-- Select Type --</option>
+                        @foreach (var typeName in b.GetVehicleTypes())
                         {
                             <option value="@typeName">@typeName</option>
                         }
@@ -68,6 +67,7 @@
         </tbody>
     </table>
 </div>
+
 
 <div>
     <div class="heading-font display-6">Bookings</div>
@@ -142,26 +142,26 @@
     private string? Make;
     private double? Odometer;
     private double? CostKm;
-    private VehicleTypes? VehicleType;
-    private List<VehicleTypes> VehicleTypeOptions = Enum.GetValues(typeof(VehicleTypes)).Cast<VehicleTypes>().ToList();
-
-
+    private string? SelectedVehicleType;
+    private string[]? vehicleTypeNames;
+    
+    
     private int? customerId;
     private string? lastName;
     private string? firstName;
 
     private void AddVehicleToData()
     {
-        if(!string.IsNullOrWhiteSpace(RegNo) && !string.IsNullOrWhiteSpace(Make) && Odometer.HasValue && CostKm.HasValue && VehicleType.HasValue)
+        if(!string.IsNullOrWhiteSpace(RegNo) && !string.IsNullOrWhiteSpace(Make) && Odometer.HasValue && CostKm.HasValue && !string.IsNullOrEmpty(SelectedVehicleType))
         {
-
-            b.AddVehicle(RegNo, Make, Odometer.Value, CostKm.Value, VehicleType.Value);
+            var vehicleTypeEnum = b.GetVehicleType(SelectedVehicleType);
+            b.AddVehicle(RegNo, Make, Odometer.Value, CostKm.Value, vehicleTypeEnum);
 
             RegNo = "";
             Make = "";
             Odometer = null;
             CostKm = null;
-            VehicleType = null;
+            SelectedVehicleType = null;
         }
 
     }
@@ -175,5 +175,10 @@
             lastName = "";
             firstName = "";
         }
+    }
+
+    protected override void OnInitialized()
+    {
+        vehicleTypeNames = b.VehicleTypeNames;
     }
 }

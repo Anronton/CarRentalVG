@@ -11,7 +11,7 @@ public class CollectionData : IData
     readonly List<IVehicle> _vehicles = new List<IVehicle>();
     readonly List<IBooking> _bookings = new List<IBooking>();
 
-    //här så ska vi skapa idn, något som databasen oftast bidrar med, Dessa måste ha Id-properties för detta
+    
 
     public int NextVehicleId => _vehicles.Count.Equals(0) ? 1 : _vehicles.Max(b => b.Id) + 1;
     public int NextPersonId => _persons.Count.Equals(0) ? 1 : _persons.Max(b => b.Id) + 1;
@@ -55,32 +55,40 @@ public class CollectionData : IData
         
         */
 
-        var motorcycleToBook = _vehicles.SingleOrDefault(v => v.RegNo == "ABC123");
-        var customerJane = _persons.SingleOrDefault(p => p.CustomerId == 721111);
-        if (motorcycleToBook is not null && customerJane is not null)
-        {
-            motorcycleToBook.Odometer = 3350;
+        //var motorcycleToBook = _vehicles.SingleOrDefault(v => v.RegNo == "ABC123");
+        //var customerJane = _persons.SingleOrDefault(p => p.CustomerId == 721111);
+        //if (motorcycleToBook is not null && customerJane is not null)
+        //{
+        //    motorcycleToBook.Odometer = 3350;
 
-            DateTime bookingDate = DateTime.Now.AddDays(-1);
+        //    DateTime bookingDate = DateTime.Now.AddDays(-1);
 
-            Booking booking2 = new Booking(
-                motorcycleToBook,
-                customerJane,
-                3000,
-                bookingDate,
-                VehicleBookingStatuses.Closed
-            );
-            booking2.CloseBooking(3350, DateTime.Now);
+        //    Booking booking2 = new Booking(
+        //        motorcycleToBook,
+        //        customerJane,
+        //        3000,
+        //        bookingDate,
+        //        VehicleBookingStatuses.Closed
+        //    );
+        //    booking2.CloseBooking(3350, DateTime.Now);
 
-            _bookings.Add(booking2);
-        }
+        //    _bookings.Add(booking2);
+        //}
         
     }
+
+   
     
-    //Här kommer vi att behöva flera metoder såsom RentVehicle, ReturnVehicle osv
-    //Dessa tre metoder kommer vi inte att då ha kvar, Vi kommer att ha en Get() som hämtar flera stycken och ska ha lambda-uttryck som vi skickar in i parentesen
-    //Lambda uttrycket ska filtrera på våra listor. Get med LinQ. Och en single som hämtar en grej. Get() ska vara generisk, både single och listan.
-    // Och en generisk som heter add. Så minst tre generiska metoder, Get Single och Add som fungerar i flera olika sammanhang.
+     
+    public IBooking RentVehicle(int VehicleId, int customerId)
+    {
+        throw new NotImplementedException();
+    }
+
+    public IBooking ReturnVehicle(int VehicleId)
+    {
+        throw new NotImplementedException();
+    }
 
     public void AddCustomer(IPerson customer)
     {
@@ -92,6 +100,10 @@ public class CollectionData : IData
         _vehicles.Add(vehicle);
     }
 
+    public void AddBooking(Booking booking)
+    {
+        _bookings.Add(booking);
+    }
 
 
     public void Add<T>(T item)
@@ -168,9 +180,7 @@ public class CollectionData : IData
         return default;
 
     }
-
-    //public IEnumerable<IPerson> GetPersons() => _persons;
-    //public IEnumerable<IBooking> GetBookings() => _bookings;
+        
     public IEnumerable<IVehicle> GetVehicles(VehicleStatuses status = default)
     {
         if(status != default)
@@ -179,4 +189,16 @@ public class CollectionData : IData
         }
         return _vehicles;
     }
+
+    public string[] VehicleStatusNames => Enum.GetNames(typeof(VehicleStatuses));
+    public string[] VehicleTypeNames => Enum.GetNames(typeof(VehicleTypes));
+    public VehicleTypes GetVehicleType(string name)
+    {
+        if(Enum.TryParse<VehicleTypes>(name, out var result))
+        {
+            return result;
+        }
+        throw new ArgumentException("Invalid Vehicle Type");
+    }
+        
 }

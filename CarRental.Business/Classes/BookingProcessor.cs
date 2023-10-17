@@ -29,20 +29,37 @@ public class BookingProcessor
         return GetItems(expression);
     } 
 
-    //public IPerson? GetPerson(string customerId){}
+    public IPerson? GetPerson(int customerId)
+    {
+        var persons = _data.Get<IPerson>(p => p.CustomerId == customerId);
+        return persons.SingleOrDefault();
+
+    }
     public IEnumerable<IVehicle> GetVehicles(Expression<Func<IVehicle, bool>>? expression = null)
     {
         return GetItems(expression);
     } 
 
 
-    //public IVehicle? GetVehicle(int vehicleId){}
-    //public IVehicle? GetVehicle(string regNo){}
+    public IVehicle? GetVehicle(int vehicleId)
+    {
+        var vehicles = _data.Get<IVehicle>(v => v.Id == vehicleId);
+        return vehicles.SingleOrDefault();
+    }
+
+    public IVehicle? GetVehicle(string regNo)
+    {
+        var vehicles = _data.Get<IVehicle>(v => v.RegNo == regNo);
+        return vehicles.SingleOrDefault();
+    }
     public IEnumerable<IBooking> GetBookings(Expression<Func<IBooking, bool>>? expression = null)
     {
         return GetItems(expression);
     }
-    //public IBooking GetBooking(int, vehicleId){}
+    /* public IBooking GetBooking(int vehicleId)
+    {
+
+    } */
 
     //public async Task<IBooking> RentVehicle(int vehicleIdm int customerId){}
     //public IBooking ReturnVehicle(int vehicleId, double distance){}
@@ -81,5 +98,31 @@ public class BookingProcessor
         AddItem(customer);
     }
 
+    public string[] VehicleStatusNames => Enum.GetNames(typeof(VehicleStatuses));
+    public string[] VehicleTypeNames => Enum.GetNames(typeof(VehicleTypes));
+
+    
+    public string[] GetVehicleTypeNames()
+    {
+        return _data.VehicleTypeNames;
+    }
+
+    public VehicleTypes GetVehicleType(string name)
+    {
+        if (Enum.TryParse(name, true, out VehicleTypes vehicleType))
+        {
+            return vehicleType;
+        }
+        return default; //throw new ArgumentException("Invalid vehicle type name")
+    }
+
+    public VehicleTypes[] GetVehicleTypes()
+    {
+        return Enum.GetValues(typeof(VehicleTypes)).Cast<VehicleTypes>().ToArray();
+    }
+    
+
+    //public VehicleTypes GetVehicleType(string name) => _data.GetVehicleType(name);
+        
 
 }

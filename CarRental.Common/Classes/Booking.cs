@@ -25,7 +25,23 @@ public class Booking : IBooking
         VehicleBookingStatus = vehicleBookingStatus;
     }
 
-   
+
+
+    public void RentVehicle(IVehicle vehicle, IPerson person, int initialOdometer, DateTime bookingDate)
+    {
+
+    }
+
+    public void ReturnVehicle(int returnOdometer, DateTime returnDate)
+    {
+        ReturnOdometer = returnOdometer;
+        ReturnDate = returnDate;
+        CalculateTotalCost();
+        VehicleBookingStatus = VehicleBookingStatuses.Closed;
+    }
+
+
+
 
     public void CalculateTotalCost()
     {
@@ -40,11 +56,11 @@ public class Booking : IBooking
         }
     }
 
-    public void CloseBooking(int returnOdometer, DateTime returnDate)
+    /*public void CloseBooking(int returnOdometer, DateTime returnDate)
     {
         ReturnOdometer = returnOdometer;
         ReturnDate = returnDate;
         CalculateTotalCost();
         VehicleBookingStatus = VehicleBookingStatuses.Closed;
-    }
+    }*/
 }

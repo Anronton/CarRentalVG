@@ -13,5 +13,8 @@ namespace CarRental.Common.Interfaces;
     public DateTime BookingDate { get; init; }
     public DateTime? ReturnDate { get; set; }
     public double? TotalCost { get; set; }
-    public VehicleBookingStatuses VehicleBookingStatus { get; set; }   
+    public VehicleBookingStatuses VehicleBookingStatus { get; set; }
+
+    public void RentVehicle(IVehicle vehicle, IPerson person, int initialOdometer, DateTime bookingDate);
+    public void ReturnVehicle(int returnOdometer, DateTime returnDate);
 }
