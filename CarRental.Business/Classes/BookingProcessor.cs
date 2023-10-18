@@ -89,7 +89,7 @@ public class BookingProcessor
     }
     //
 
-    public IBooking ReturnVehicle(int vehicleId, int distance)
+    public IBooking? ReturnVehicle(int vehicleId, int distance)
     {
         
         var booking = _data.Get<IBooking>(b => b.Id == vehicleId).SingleOrDefault();
@@ -126,7 +126,7 @@ public class BookingProcessor
 
     public void AddVehicle(string regNo, string make, double odometer, double costKm, VehicleTypes vehicleType)
     {
-        IVehicle vehicle;
+        IVehicle? vehicle;
 
         if (vehicleType == VehicleTypes.Sedan)
         {
@@ -153,7 +153,7 @@ public class BookingProcessor
     }
     public void AddCustomer(int customerId, string firstName, string lastName)
     {
-        IPerson customer = new Customer(customerId, firstName, lastName);
+        IPerson? customer = new Customer(customerId, firstName, lastName);
         AddItem(customer);
     }
 

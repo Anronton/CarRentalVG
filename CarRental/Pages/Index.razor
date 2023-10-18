@@ -57,7 +57,15 @@
                     <td class="align-middle">@vehicle.CostKm</td>
                     <td class="align-middle">@vehicle.VehicleType</td>
                     <td class="align-middle">@vehicle.DayCost()</td>
-                    <td><input class="form-control" /></td> <!-- Dropdown eller mata in distance -->
+                    <td>
+                        <select class="form-control" @bind="SelectedPerson">
+                            <option value="">--Select Customer--</option>
+                            @foreach(var person in b.GetPersons())
+                            {
+                                <option value="@person.CustomerId">@($"{person.FirstName} {person.LastName} ({person.CustomerId})")</option>
+                            }
+                        </select> <!-- Denna ska skifta till input för distance -->
+                    </td> 
                     <td><button class="btn-sm">re/r</button></td> <!-- Knapp som skiftar mellan return och rent -->
                     <td>
                         <label class=@(vehicle.VehicleStatus == Common.Enums.VehicleStatuses.Booked ? "btn-sm btn-danger" : "btn-sm btn-dark")>@vehicle.VehicleStatus</label>
@@ -119,8 +127,8 @@
         </thead>
         <tbody>
             <tr>
-                <td><input @bind="customerId" class="form-control" placeholder="SSN"/></td>
-                <td><input @bind="lastName"class="form-control" placeholder="Last Name" /></td>
+                <td><input @bind="customerId" class="form-control" placeholder="SSN" /></td>
+                <td><input @bind="lastName" class="form-control" placeholder="Last Name" /></td>
                 <td><input @bind="firstName" class="form-control" placeholder="First Name" /></td>
                 <td><button @onclick="AddCustomerToData" class="btn-sm">Add</button></td>
             </tr>
@@ -138,22 +146,26 @@
 </div>
 
 @code{
+    
+    private string? SelectedPerson;
+
+
     private string? RegNo;
     private string? Make;
     private double? Odometer;
     private double? CostKm;
     private string? SelectedVehicleType;
-    //private string[]? vehicleTypeNames;
-    //Aja, näst ska vi se till att det går att göra bokningar! Kanske testa lite ifrån SeedData?
+   
+
 
     private int? customerId;
     private string? lastName;
     private string? firstName;
 
-    private void AddBookingToData()
-    {
+    // private void AddBookingToData()
+    // {
         
-    }
+    // }
 
     private void AddVehicleToData()
     {
@@ -181,6 +193,4 @@
             firstName = "";
         }
     }
-
-    
 }

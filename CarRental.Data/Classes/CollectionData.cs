@@ -36,49 +36,49 @@ public class CollectionData : IData
         //Bookings
 
 
-        //var carToBook = _vehicles.SingleOrDefault(c => c.RegNo == "BKJ142");
-        //var customerJan = _persons.SingleOrDefault(p => p.CustomerId == 960321);
-        //if (carToBook is not null && customerJan is not null)
-        //{
-        //    carToBook.Odometer = 2500;
-        //    DateTime bookingDate1 = DateTime.Now;
+        var carToBook = _vehicles.SingleOrDefault(c => c.RegNo == "BKJ142");
+        var customerJan = _persons.SingleOrDefault(p => p.CustomerId == 960321);
+        if (carToBook is not null && customerJan is not null)
+        {
+            carToBook.Odometer = 2500;
+            DateTime bookingDate1 = DateTime.Now;
 
-        //    Booking booking1 = new Booking(
-        //        carToBook,
-        //        customerJan,
-        //        2500,
-        //        bookingDate1,
-        //        VehicleBookingStatuses.Open
-        //        );
-            
-        //    booking1.RentVehicle(carToBook, customerJan, 2500, bookingDate1);
-        //    _bookings.Add(booking1);
-        //}
+            Booking booking1 = new Booking(
+                carToBook,
+                customerJan,
+                2500,
+                bookingDate1,
+                VehicleBookingStatuses.Open
+                );
 
-        //var motorcycleToBook = _vehicles.SingleOrDefault(v => v.RegNo == "ABC123");
-        //var customerJane = _persons.SingleOrDefault(p => p.CustomerId == 721111);
-        //if (motorcycleToBook is not null && customerJane is not null)
-        //{
-        //    motorcycleToBook.Odometer = 3350;
+            booking1.RentVehicle(carToBook, customerJan, 2500, bookingDate1);
+            _bookings.Add(booking1);
+        }
 
-        //    DateTime bookingDate = DateTime.Now.AddDays(-1);
+        var motorcycleToBook = _vehicles.SingleOrDefault(v => v.RegNo == "ABC123");
+        var customerJane = _persons.SingleOrDefault(p => p.CustomerId == 721111);
+        if (motorcycleToBook is not null && customerJane is not null)
+        {
+            motorcycleToBook.Odometer = 3350;
 
-        //    Booking booking2 = new Booking(
-        //        motorcycleToBook,
-        //        customerJane,
-        //        3000,
-        //        bookingDate,
-        //        VehicleBookingStatuses.Closed
-        //    );
-        //    booking2.ReturnVehicle(3350, DateTime.Now);
+            DateTime bookingDate = DateTime.Now.AddDays(-1);
 
-        //    _bookings.Add(booking2);
-        //}
+            Booking booking2 = new Booking(
+                motorcycleToBook,
+                customerJane,
+                3000,
+                bookingDate,
+                VehicleBookingStatuses.Closed
+            );
+            booking2.ReturnVehicle(3350, DateTime.Now);
+
+            _bookings.Add(booking2);
+        }
 
     }
 
-   
-     
+
+
     public IBooking? RentVehicle(int VehicleId, int customerId)
     {
         IVehicle? vehicle = _vehicles.SingleOrDefault(v => v.Id == VehicleId);
