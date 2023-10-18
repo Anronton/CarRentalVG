@@ -79,10 +79,10 @@ public class CollectionData : IData
 
    
      
-    public IBooking RentVehicle(int VehicleId, int customerId)
+    public IBooking? RentVehicle(int VehicleId, int customerId)
     {
-        IVehicle vehicle = _vehicles.SingleOrDefault(v => v.Id == VehicleId);
-        IPerson customer = _persons.SingleOrDefault(p => p.Id == customerId);
+        IVehicle? vehicle = _vehicles.SingleOrDefault(v => v.Id == VehicleId);
+        IPerson? customer = _persons.SingleOrDefault(p => p.Id == customerId);
 
         if (vehicle != null && customer != null)
         {
@@ -93,6 +93,7 @@ public class CollectionData : IData
                 vehicle.VehicleStatus = VehicleStatuses.Booked;
 
                 _bookings.Add(booking);
+                return booking;
             }
             else
             {
@@ -100,17 +101,17 @@ public class CollectionData : IData
             }
         }
         return null;
-    } // Denna
+    }
 
-    public IBooking ReturnVehicle(int VehicleId)
+    public IBooking? ReturnVehicle(int VehicleId)
     {
-        IVehicle vehicle = _vehicles.SingleOrDefault(v => v.Id == VehicleId);
+        IVehicle? vehicle = _vehicles.SingleOrDefault(v => v.Id == VehicleId);
 
         if (vehicle != null)
         {
             if (vehicle.VehicleStatus == VehicleStatuses.Booked)
             {
-                IBooking booking = _bookings.SingleOrDefault(b => b.Vehicle ==  vehicle && b.VehicleBookingStatus == VehicleBookingStatuses.Open);
+                IBooking? booking = _bookings.SingleOrDefault(b => b.Vehicle ==  vehicle && b.VehicleBookingStatus == VehicleBookingStatuses.Open);
 
                 if (booking != null)
                 {
@@ -130,7 +131,7 @@ public class CollectionData : IData
             
         }
         return null;
-    } // Och denna är viktiga att fortsätta med!
+    }
 
 
     public void AddCustomer(IPerson customer)
