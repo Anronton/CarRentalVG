@@ -14,12 +14,12 @@ public class BookingProcessor
         _data = data;
     }
 
-    public IEnumerable<T> GetItems<T>(Expression<Func<T, bool>>? expression = null)
+    public IEnumerable<T> GetItems<T>(Expression<Func<T, bool>>? expression = null) // se över Expression!
     {
         return _data.Get(expression);
     }
 
-    public void AddItem<T>(T item)
+    public void AddItem<T>(T item) // where T : class
     {
         _data.Add(item);
     }
@@ -65,8 +65,29 @@ public class BookingProcessor
 
 
     //Denna ska vi jobba med näst! Testar med att göra den icke async för att testa så att all logik fungerar.
-    //public async Task<IBooking> RentVehicle(int vehicleIdm int customerId){}
+    //public async Task<IBooking> RentVehicle(int vehicleId int customerId){}
 
+    //gör en temporär AddBooking innan vi gör async metoden.
+    public void AddBooking(int vehicleId, int customerId)
+    {
+        var vehicle = GetVehicle(vehicleId); 
+        var customer = GetPerson(customerId);
+
+        if (vehicle is null || customer is null)
+        {
+            throw new Exception("Vehicle or customer not found");
+        }
+
+        if (vehicle.VehicleStatus is not VehicleStatuses.Available)
+        {
+            throw new Exception("Vehicle is not available for booking");
+        }
+
+        var booking = new Booking(vehicle, customer, (int)vehicle.Odometer, DateTime.Now, VehicleBookingStatuses.Open);
+        vehicle.VehicleStatus = VehicleStatuses.Booked;
+        AddItem(booking);
+    }
+    //
 
     public IBooking ReturnVehicle(int vehicleId, int distance)
     {

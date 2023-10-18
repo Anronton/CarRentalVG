@@ -7,9 +7,9 @@ namespace CarRental.Data.Classes;
 
 public class CollectionData : IData
 {
-    readonly List<IPerson> _persons = new List<IPerson>();
-    readonly List<IVehicle> _vehicles = new List<IVehicle>();
-    readonly List<IBooking> _bookings = new List<IBooking>();
+    readonly List<IPerson> _persons = new();
+    readonly List<IVehicle> _vehicles = new();
+    readonly List<IBooking> _bookings = new();
 
     
 
@@ -34,26 +34,26 @@ public class CollectionData : IData
         _vehicles.Add(new Car("ORT141", "Saab", 10000, 1.5, VehicleTypes.Combi, VehicleStatuses.Available));
 
         //Bookings
-        /*
-        var vehicleToBook = _vehicles.SingleOrDefault(v => v.RegNo == "SIX666");
-        var customerToBook = _persons.SingleOrDefault(p => p.FirstName == "John");
 
-        if (vehicleToBook is not null && customerToBook is not null)
-        {
-            Booking booking = new Booking(
-                vehicleToBook,
-                customerToBook,
-                vehicleToBook.Odometer,
-                DateTime.Now,
-                VehicleBookingStatuses.Open
-            );
 
-            vehicleToBook.VehicleStatus = Common.Enums.VehicleStatuses.Booked;
+        //var carToBook = _vehicles.SingleOrDefault(c => c.RegNo == "BKJ142");
+        //var customerJan = _persons.SingleOrDefault(p => p.CustomerId == 960321);
+        //if (carToBook is not null && customerJan is not null)
+        //{
+        //    carToBook.Odometer = 2500;
+        //    DateTime bookingDate1 = DateTime.Now;
 
-            _bookings.Add(booking);
-        }
-        
-        */
+        //    Booking booking1 = new Booking(
+        //        carToBook,
+        //        customerJan,
+        //        2500,
+        //        bookingDate1,
+        //        VehicleBookingStatuses.Open
+        //        );
+            
+        //    booking1.RentVehicle(carToBook, customerJan, 2500, bookingDate1);
+        //    _bookings.Add(booking1);
+        //}
 
         //var motorcycleToBook = _vehicles.SingleOrDefault(v => v.RegNo == "ABC123");
         //var customerJane = _persons.SingleOrDefault(p => p.CustomerId == 721111);
@@ -70,11 +70,11 @@ public class CollectionData : IData
         //        bookingDate,
         //        VehicleBookingStatuses.Closed
         //    );
-        //    booking2.CloseBooking(3350, DateTime.Now);
+        //    booking2.ReturnVehicle(3350, DateTime.Now);
 
         //    _bookings.Add(booking2);
         //}
-        
+
     }
 
    
@@ -143,10 +143,10 @@ public class CollectionData : IData
         _vehicles.Add(vehicle);
     }
 
-    public void AddBooking(Booking booking)
+    public void AddBooking(IBooking booking)
     {
         _bookings.Add(booking);
-    }
+    } //hade klassen Booking innan!
 
 
     public void Add<T>(T item)
@@ -165,7 +165,7 @@ public class CollectionData : IData
         }
     }
 
-    public List<T> Get<T>(Expression<Func<T, bool>>? expression)
+    public List<T> Get<T>(Expression<Func<T, bool>>? expression) // tänk över Expression, jonas använder inte den, det har med laddningstid/kompilering att göra, mest praktiskt med väldigt mycket kod, reflektera över det!
     {
         if (typeof(T) == typeof(IPerson))
         {
@@ -194,7 +194,7 @@ public class CollectionData : IData
         return new List<T>();
     }
 
-    public T? Single<T>(Expression<Func<T, bool>>? expression)
+    public T? Single<T>(Expression<Func<T, bool>>? expression) // tänk över Expression, jonas använder inte den.
     {
         if (typeof(T) == typeof(IPerson))
         {
@@ -221,7 +221,6 @@ public class CollectionData : IData
             return default;
         }
         return default;
-
     }
         
     public IEnumerable<IVehicle> GetVehicles(VehicleStatuses status = default)

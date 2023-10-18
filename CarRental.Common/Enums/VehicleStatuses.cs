@@ -6,7 +6,7 @@
         Available = 2,
     }
 
-    public enum VehicleBookingStatuses // Denna lade jag till själv, kanske är överflödig?
+    public enum VehicleBookingStatuses
     {
         Closed = 1,
         Open = 2
