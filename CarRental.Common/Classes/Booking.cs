@@ -10,7 +10,7 @@ public class Booking : IBooking
     public IVehicle Vehicle { get; init; }
     public IPerson Person { get; init; }
     public int Odometer { get; set; }
-    public int Distance { get; set; }
+    public int? Distance { get; set; }
     public DateTime BookingDate { get; set; }
     public DateTime? ReturnDate { get; set; }
     public double? TotalCost { get; set; }
@@ -51,7 +51,7 @@ public class Booking : IBooking
         }
     }
 
-    public void ReturnVehicle(int distance, DateTime returnDate)
+    public void ReturnVehicle(int? distance, DateTime returnDate)
     {
         Distance = distance;
         ReturnDate = returnDate;
@@ -66,7 +66,7 @@ public class Booking : IBooking
     {
         if (ReturnDate.HasValue)
         {
-            int distance = Distance - Odometer;
+            int distance = (int)(Distance - Odometer);
             double days = (ReturnDate.Value - BookingDate).TotalDays;
             double firstDayCost = Math.Max(1, Vehicle.DayCost());
 

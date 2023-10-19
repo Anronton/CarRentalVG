@@ -113,7 +113,7 @@ public class BookingProcessor
         if (vehicle != null)
         {
             vehicle.VehicleStatus = VehicleStatuses.Available;
-            vehicle.Odometer = booking.Distance;
+            vehicle.Odometer = (double)(booking.Distance ?? vehicle.Odometer);
 
             _data.Add(vehicle);
         }
@@ -153,7 +153,7 @@ public class BookingProcessor
     }
     public void AddCustomer(int customerId, string firstName, string lastName)
     {
-        IPerson? customer = new Customer(customerId, firstName, lastName);
+        IPerson? customer = new Customer(customerId, lastName, firstName);
         AddItem(customer);
     }
 
