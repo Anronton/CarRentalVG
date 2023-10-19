@@ -18,6 +18,7 @@ public class Booking : IBooking
 
     public Booking(IVehicle vehicle, IPerson person, int odometer, DateTime bookingDate, VehicleBookingStatuses vehicleBookingStatus)
     {
+        Id = 0;
         Vehicle = vehicle;
         Person = person;
         Odometer = odometer;
@@ -25,9 +26,7 @@ public class Booking : IBooking
         VehicleBookingStatus = vehicleBookingStatus;
     }
 
-
-
-    public void RentVehicle(IVehicle vehicle, IPerson person, int odometer, DateTime bookingDate)
+    /*public void RentVehicle(IVehicle vehicle, IPerson person, int odometer, DateTime bookingDate)
     {
         if (VehicleBookingStatus != VehicleBookingStatuses.Open)
         {
@@ -49,24 +48,22 @@ public class Booking : IBooking
         {
             throw new ArgumentException("Invalid vehicle or customer");
         }
-    }
+    }*/
 
-    public void ReturnVehicle(int? distance, DateTime returnDate)
+    /*public void ReturnVehicle(int? distance, DateTime returnDate)
     {
         Distance = distance;
         ReturnDate = returnDate;
         CalculateTotalCost();
         VehicleBookingStatus = VehicleBookingStatuses.Closed;
-    }
-
-
+    }*/
 
     // göra denna till en extension?
     public void CalculateTotalCost()
     {
-        if (ReturnDate.HasValue)
+        if (ReturnDate.HasValue && Distance.HasValue)
         {
-            int distance = (int)(Distance - Odometer);
+            int distance = Distance.Value - Odometer;
             double days = (ReturnDate.Value - BookingDate).TotalDays;
             double firstDayCost = Math.Max(1, Vehicle.DayCost());
 

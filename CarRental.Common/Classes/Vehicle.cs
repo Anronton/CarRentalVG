@@ -20,6 +20,7 @@ public abstract class Vehicle : IVehicle
 
     public Vehicle(string regNo, string make, double odometer, double costKm, VehicleTypes vehicleType, VehicleStatuses vehicleStatus)
     {
+        Id = 0;
         RegNo = regNo;
         Make = make;
         Odometer = odometer;

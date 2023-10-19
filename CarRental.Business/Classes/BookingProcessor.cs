@@ -14,12 +14,12 @@ public class BookingProcessor
         _data = data;
     }
 
-    public IEnumerable<T> GetItems<T>(Expression<Func<T, bool>>? expression = null) // se över Expression!
+    public IEnumerable<T> GetItems<T>(Expression<Func<T, bool>>? expression = null) //where T : class
     {
         return _data.Get(expression);
     }
 
-    public void AddItem<T>(T item) // where T : class
+    public void AddItem<T>(T item)  //where T : class
     {
         _data.Add(item);
     }
@@ -31,9 +31,7 @@ public class BookingProcessor
 
     public IPerson? GetPerson(int customerId)
     {
-        var persons = _data.Get<IPerson>(p => p.CustomerId == customerId);
-        return persons.SingleOrDefault();
-
+        return _data.Get<IPerson>(p => p.CustomerId == customerId).SingleOrDefault();
     }
     public IEnumerable<IVehicle> GetVehicles(Expression<Func<IVehicle, bool>>? expression = null)
     {
@@ -44,13 +42,13 @@ public class BookingProcessor
     public IVehicle? GetVehicle(int vehicleId)
     {
         var vehicles = _data.Get<IVehicle>(v => v.Id == vehicleId);
-        return vehicles.SingleOrDefault();
+        return vehicles.FirstOrDefault();
     }
 
     public IVehicle? GetVehicle(string regNo)
     {
         var vehicles = _data.Get<IVehicle>(v => v.RegNo == regNo);
-        return vehicles.SingleOrDefault();
+        return vehicles.FirstOrDefault();
     }
     public IEnumerable<IBooking> GetBookings(Expression<Func<IBooking, bool>>? expression = null)
     {
@@ -60,39 +58,48 @@ public class BookingProcessor
     public IBooking? GetBooking(int bookingId)
     {
         var bookings = _data.Get<IBooking>(b => b.Id == bookingId);
-        return bookings.SingleOrDefault();
-    } 
+        return bookings.FirstOrDefault();
+    }
 
 
     //Denna ska vi jobba med näst! Testar med att göra den icke async för att testa så att all logik fungerar.
     //public async Task<IBooking> RentVehicle(int vehicleId int customerId){}
 
-    //gör en temporär AddBooking innan vi gör async metoden.
-    public void AddBooking(int vehicleId, int customerId)
+    //Vi gör en temporär Dictionary
+    private Dictionary<IVehicle, IPerson?> vehicleCustomerDictionary = new Dictionary<IVehicle, IPerson?>();
+    //
+
+    //Temporär metod för dictionaryn
+    public Dictionary<IVehicle, IPerson?> GetVehicleCustomerDictionary()
     {
-        var vehicle = GetVehicle(vehicleId); 
+        return vehicleCustomerDictionary;
+    }
+    //
+
+    //gör en temporär RentVehicle innan vi gör async metoden.
+    public void RentVehicle(int vehicleId, int customerId)
+    {
+        var vehicle = GetVehicle(vehicleId);
         var customer = GetPerson(customerId);
 
-        if (vehicle is null || customer is null)
+        if (vehicle != null && customer != null)
         {
-            throw new Exception("Vehicle or customer not found");
+           
+            vehicleCustomerDictionary[vehicle] = customer;
+
+
+            var booking = new Booking(vehicle, customer, (int)vehicle.Odometer, DateTime.Now, VehicleBookingStatuses.Open);
+            vehicle.VehicleStatus = VehicleStatuses.Booked;
+            AddItem(booking);
         }
 
-        if (vehicle.VehicleStatus is not VehicleStatuses.Available)
-        {
-            throw new Exception("Vehicle is not available for booking");
-        }
-
-        var booking = new Booking(vehicle, customer, (int)vehicle.Odometer, DateTime.Now, VehicleBookingStatuses.Open);
-        vehicle.VehicleStatus = VehicleStatuses.Booked;
-        AddItem(booking);
     }
     //
 
     public IBooking? ReturnVehicle(int vehicleId, int distance)
     {
         
-        var booking = _data.Get<IBooking>(b => b.Id == vehicleId).SingleOrDefault();
+        var booking = _data.Get<IBooking>(b => b.Id == vehicleId).FirstOrDefault();
 
         if (booking == null)
         {
@@ -104,11 +111,11 @@ public class BookingProcessor
             throw new Exception("Booking is not in an open state");
         }
 
-        booking.ReturnVehicle(distance, DateTime.Now);
+        booking.Distance = distance;
 
         _data.Add(booking);
 
-        var vehicle = _data.Get<IVehicle>(v => v.Id == vehicleId).SingleOrDefault();
+        var vehicle = _data.Get<IVehicle>(v => v.Id == vehicleId).FirstOrDefault();
 
         if (vehicle != null)
         {
@@ -124,7 +131,7 @@ public class BookingProcessor
         return booking;
     }
 
-    public void AddVehicle(string regNo, string make, double odometer, double costKm, VehicleTypes vehicleType)
+    public void AddVehicle(string regNo, string make, double odometer, double costKm, VehicleTypes vehicleType, int? customerId)
     {
         IVehicle? vehicle;
 
@@ -148,6 +155,12 @@ public class BookingProcessor
         {
             throw new Exception();
         }
+        if (customerId.HasValue)
+        {
+            var customer = GetPerson(customerId.Value);
+            vehicleCustomerDictionary[vehicle] = customer;
+        }
+
         AddItem(vehicle);
         
     }

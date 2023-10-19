@@ -1,5 +1,6 @@
 ﻿@page "/"
 @using CarRental.Common.Extensions
+@using CarRental.Common.Interfaces @* Temporär *@
 @using CarRental.Business.Classes 
 @inject BookingProcessor b
 
@@ -50,6 +51,19 @@
             </tr>
             @foreach (var vehicle in b.GetVehicles())
             {
+                IPerson? customerForVehicle = null;
+                if (vehicleCustomerDictionary.TryGetValue(vehicle, out customerForVehicle))
+                {
+                    @if (customerForVehicle != null)
+                    {
+                        <p>Selected Customer: @GetCustomerInfo(customerForVehicle)</p>
+                    }
+                    else
+                    {
+                        <p>No customer selected for this vehicle.</p>
+                    }
+                }
+                
                 <tr>
                     <th scope="row" class="align-middle">@vehicle.RegNo</th>
                     <td class="align-middle">@vehicle.Make</td>
@@ -58,15 +72,26 @@
                     <td class="align-middle">@vehicle.VehicleType</td>
                     <td class="align-middle">@vehicle.DayCost()</td>
                     <td>
-                        <select class="form-control" @bind="SelectedPerson">
-                            <option value="">--Select Customer--</option>
+                        <select class="form-control" @bind="selectedCustomerId">
+                            <option value="0"></option>
                             @foreach(var person in b.GetPersons())
                             {
                                 <option value="@person.CustomerId">@($"{person.FirstName} {person.LastName} ({person.CustomerId})")</option>
                             }
-                        </select> <!-- Denna ska skifta till input för distance -->
+                        </select> 
+                    </td>
+                    
+                    <td>
+                        @if (vehicle.VehicleStatus == CarRental.Common.Enums.VehicleStatuses.Available)
+                        {
+                            <button @onclick="() => RentVehicle(customerForVehicle?.CustomerId, vehicle.Id)" class="btn-sm">Rent</button>
+                        }
+                        @if (vehicle.VehicleStatus == CarRental.Common.Enums.VehicleStatuses.Booked)
+                        {
+                            <button @onclick="() => ReturnVehicle(vehicle.Id)" class="btn-sm">Return</button>
+                            <input class="form-control" placeholder="Distance" @bind="Distance" />
+                        }
                     </td> 
-                    <td><button class="btn-sm">re/r</button></td> <!-- Knapp som skiftar mellan return och rent -->
                     <td>
                         <label class=@(vehicle.VehicleStatus == Common.Enums.VehicleStatuses.Booked ? "btn-sm btn-danger" : "btn-sm btn-dark")>@vehicle.VehicleStatus</label>
                     </td>                       
@@ -145,40 +170,116 @@
     </table>
 </div>
 
+<div class="alert alert-danger" role="alert" style="display: @(string.IsNullOrEmpty(errorMessage) ? "none" : "block")">
+    @errorMessage
+</div>
 @code{
+    private int SelectedPerson = 0;
     
-    private string? SelectedPerson;
+    private int selectedCustomerId = 0;
+    private string? errorMessage = null;
+    //
+    private string GetCustomerInfo(IPerson customer)
+    {
+        if (customer != null)
+        {
+            return $"{customer.FirstName} {customer.LastName} ({customer.CustomerId})";
+        }
+        else
+        {
+            return "No customer selected for this vehicle.";
+        }
+    }
 
+    private Dictionary<IVehicle, IPerson?> vehicleCustomerDictionary;
 
+    protected override void OnInitialized()
+    {
+        vehicleCustomerDictionary = b.GetVehicleCustomerDictionary();
+    }
+
+    private int? Distance;
+    private CarRental.Common.Interfaces.IVehicle? SelectedVehicle { get; set; }
+
+    //
+    private void ShowErrorMessage(string message)
+    {
+        errorMessage = message;
+    }
     private string? RegNo;
     private string? Make;
     private double? Odometer;
     private double? CostKm;
     private string? SelectedVehicleType;
-   
-
 
     private int? customerId;
     private string? lastName;
     private string? firstName;
 
-    // private void AddBookingToData()
-    // {
-        
-    // }
+    private void ReturnVehicle(int vehicleId)
+    {
+        if (Distance.HasValue)
+        {
+            try
+            {
+                b.ReturnVehicle(vehicleId, Distance.Value);
+
+                var selectedVehicle = b.GetVehicle(vehicleId);
+                if (selectedVehicle != null)
+                {
+                    selectedVehicle.VehicleStatus = CarRental.Common.Enums.VehicleStatuses.Available;
+                    selectedVehicle.Odometer = (double)(Distance.HasValue ? Distance.Value : selectedVehicle.Odometer);
+                    vehicleCustomerDictionary[selectedVehicle] = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowErrorMessage("An error occurred: " + ex.Message);
+            }
+        }
+        else
+        {
+            ShowErrorMessage("Please enter the distance.");
+        }
+    }
+
+    private void RentVehicle(int? customerId, int vehicleId)
+    {
+        if (customerId.HasValue)
+        {
+            var selectedVehicle = b.GetVehicle(vehicleId);
+
+            if (selectedVehicle != null)
+            {
+                b.RentVehicle(vehicleId, customerId.Value);
+
+                vehicleCustomerDictionary[selectedVehicle] = b.GetPerson(customerId.Value);
+            }
+            else
+            {
+                ShowErrorMessage("Selected vehicle not found.");
+            }
+        }
+        else
+        {
+            ShowErrorMessage("Please select a valid customer.");
+        }
+    }
 
     private void AddVehicleToData()
     {
         if(!string.IsNullOrWhiteSpace(RegNo) && !string.IsNullOrWhiteSpace(Make) && Odometer.HasValue && CostKm.HasValue && !string.IsNullOrEmpty(SelectedVehicleType))
         {
             var vehicleTypeEnum = b.GetVehicleType(SelectedVehicleType);
-            b.AddVehicle(RegNo, Make, Odometer.Value, CostKm.Value, vehicleTypeEnum);
+            b.AddVehicle(RegNo, Make, Odometer.Value, CostKm.Value, vehicleTypeEnum, SelectedPerson);
 
             RegNo = "";
             Make = "";
             Odometer = null;
             CostKm = null;
             SelectedVehicleType = null;
+
+            SelectedPerson = default;
         }
 
     }
@@ -193,4 +294,5 @@
             firstName = "";
         }
     }
+    // BLäääääh "Please select a valid customer."
 }

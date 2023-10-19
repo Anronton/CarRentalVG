@@ -7,11 +7,19 @@ namespace CarRental.Data.Classes;
 
 public class CollectionData : IData
 {
+
+    //private int _nextVehicleId = 1;  
+    //private int _nextPersonId = 1;
+    //private int _nextBookingId = 1;
+
     readonly List<IPerson> _persons = new();
     readonly List<IVehicle> _vehicles = new();
     readonly List<IBooking> _bookings = new();
 
-    
+    //public int NextVehicleId => _nextVehicleId++;
+    //public int NextPersonId => _nextPersonId++;
+    //public int NextBookingId => _nextBookingId++;
+
 
     public int NextVehicleId => _vehicles.Count.Equals(0) ? 1 : _vehicles.Max(b => b.Id) + 1;
     public int NextPersonId => _persons.Count.Equals(0) ? 1 : _persons.Max(b => b.Id) + 1;
@@ -70,8 +78,8 @@ public class CollectionData : IData
                 bookingDate,
                 VehicleBookingStatuses.Closed
             );
-            booking2.ReturnVehicle(3350, DateTime.Now);
-
+            booking2.Distance = 3350;
+            booking2.ReturnDate = DateTime.Now;
             _bookings.Add(booking2);
         }
 
@@ -92,7 +100,7 @@ public class CollectionData : IData
 
                 vehicle.VehicleStatus = VehicleStatuses.Booked;
 
-                _bookings.Add(booking);
+                AddBooking(booking);
                 return booking;
             }
             else
@@ -115,7 +123,6 @@ public class CollectionData : IData
 
                 if (booking != null)
                 {
-                    booking.RentVehicle(vehicle, booking.Person, (int)vehicle.Odometer, DateTime.Now);
 
                     vehicle.VehicleStatus = VehicleStatuses.Available;
 
@@ -147,21 +154,24 @@ public class CollectionData : IData
     public void AddBooking(IBooking booking)
     {
         _bookings.Add(booking);
-    } //hade klassen Booking innan!
+    }
 
 
     public void Add<T>(T item)
     {
         if (item is IVehicle vehicle)
         {
+            vehicle.Id = NextVehicleId;
             _vehicles.Add(vehicle);
         }
         if (item is IPerson person)
         {
+            person.Id = NextPersonId;
             _persons.Add(person);
         }
         if (item is IBooking booking)
         {
+            booking.Id = NextBookingId;
             _bookings.Add(booking);
         }
     }
