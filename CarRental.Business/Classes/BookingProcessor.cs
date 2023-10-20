@@ -8,7 +8,7 @@ namespace CarRental.Business.Classes;
 public class BookingProcessor
 {
     private readonly IData _data;
-
+    
     public BookingProcessor(IData data)
     {
         _data = data;
@@ -19,7 +19,7 @@ public class BookingProcessor
         return _data.Get(expression);
     }
 
-    public void AddItem<T>(T item)  //where T : class
+    public void AddItem<T>(T item) //where T : class
     {
         _data.Add(item);
     }
@@ -31,7 +31,7 @@ public class BookingProcessor
 
     public IPerson? GetPerson(int customerId)
     {
-        return _data.Get<IPerson>(p => p.CustomerId == customerId).SingleOrDefault();
+        return _data.Get<IPerson>(p => p.Id == customerId).SingleOrDefault();
     }
     public IEnumerable<IVehicle> GetVehicles(Expression<Func<IVehicle, bool>>? expression = null)
     {
@@ -63,42 +63,45 @@ public class BookingProcessor
 
 
     //Denna ska vi jobba med näst! Testar med att göra den icke async för att testa så att all logik fungerar.
-    //public async Task<IBooking> RentVehicle(int vehicleId int customerId){}
+    //public async Task<IBooking> RentVehicle(int vehicleId int customerId)
+    //{
+    //  await Task.Delay(10000) // fakeväntar 10sekunder
+    //}
 
     //Vi gör en temporär Dictionary
-    private Dictionary<IVehicle, IPerson?> vehicleCustomerDictionary = new Dictionary<IVehicle, IPerson?>();
+    //private Dictionary<IVehicle, IPerson?> vehicleCustomerDictionary = new Dictionary<IVehicle, IPerson?>();
     //
 
     //Temporär metod för dictionaryn
-    public Dictionary<IVehicle, IPerson?> GetVehicleCustomerDictionary()
-    {
-        return vehicleCustomerDictionary;
-    }
+    //public Dictionary<IVehicle, IPerson?> GetVehicleCustomerDictionary()
+    //{
+    //    return vehicleCustomerDictionary;
+    //}
     //
 
     //gör en temporär RentVehicle innan vi gör async metoden.
-    public void RentVehicle(int vehicleId, int customerId)
-    {
-        var vehicle = GetVehicle(vehicleId);
-        var customer = GetPerson(customerId);
+    //public void RentVehicle(int vehicleId, int customerId)
+    //{
+    //    var vehicle = GetVehicle(vehicleId);
+    //    var customer = GetPerson(customerId);
 
-        if (vehicle != null && customer != null)
-        {
-           
-            vehicleCustomerDictionary[vehicle] = customer;
+    //    if (vehicle != null && customer != null)
+    //    {
+
+    //        vehicleCustomerDictionary[vehicle] = customer;
 
 
-            var booking = new Booking(vehicle, customer, (int)vehicle.Odometer, DateTime.Now, VehicleBookingStatuses.Open);
-            vehicle.VehicleStatus = VehicleStatuses.Booked;
-            AddItem(booking);
-        }
+    //        var booking = new Booking(vehicle, customer, (int)vehicle.Odometer, DateTime.Now, VehicleBookingStatuses.Open);
+    //        vehicle.VehicleStatus = VehicleStatuses.Booked;
+    //        AddItem(booking);
+    //    }
 
-    }
+    //}
     //
 
-    public IBooking? ReturnVehicle(int vehicleId, int distance)
+    /*public IBooking? ReturnVehicle(int vehicleId, int distance)
     {
-        
+
         var booking = _data.Get<IBooking>(b => b.Id == vehicleId).FirstOrDefault();
 
         if (booking == null)
@@ -129,44 +132,46 @@ public class BookingProcessor
             throw new Exception("Vehicle not found");
         }
         return booking;
-    }
+    }*/
 
-    public void AddVehicle(string regNo, string make, double odometer, double costKm, VehicleTypes vehicleType, int? customerId)
+    public void AddVehicle(string regNo, string make, double odometer, double costKm, VehicleTypes vehicleType)
     {
+        int nextVehicleId = _data.NextVehicleId;
         IVehicle? vehicle;
 
         if (vehicleType == VehicleTypes.Sedan)
         {
-            vehicle = new Car(regNo, make, odometer, costKm, VehicleTypes.Sedan, VehicleStatuses.Available);
+            vehicle = new Car(default, regNo, make, odometer, costKm, VehicleTypes.Sedan, VehicleStatuses.Available);
         }
         else if (vehicleType == VehicleTypes.Combi)
         {
-            vehicle = new Car(regNo, make, odometer, costKm, VehicleTypes.Combi, VehicleStatuses.Available);
+            vehicle = new Car(default, regNo, make, odometer, costKm, VehicleTypes.Combi, VehicleStatuses.Available);
         }
         else if (vehicleType == VehicleTypes.Van)
         {
-            vehicle = new Car(regNo, make, odometer, costKm, VehicleTypes.Van, VehicleStatuses.Available);
+            vehicle = new Car(default, regNo, make, odometer, costKm, VehicleTypes.Van, VehicleStatuses.Available);
         }
         else if (vehicleType == VehicleTypes.Motorcycle)
         {
-            vehicle = new Motorcycle(regNo, make, odometer, costKm, VehicleTypes.Motorcycle, VehicleStatuses.Available);
+            vehicle = new Motorcycle(default, regNo, make, odometer, costKm, VehicleTypes.Motorcycle, VehicleStatuses.Available);
         }
         else
         {
             throw new Exception();
         }
-        if (customerId.HasValue)
-        {
-            var customer = GetPerson(customerId.Value);
-            vehicleCustomerDictionary[vehicle] = customer;
-        }
-
+        //if (customerId.HasValue)
+        //{
+        //    var customer = GetPerson(customerId.Value);
+        //}
+        vehicle.Id = nextVehicleId;
         AddItem(vehicle);
         
     }
-    public void AddCustomer(int customerId, string firstName, string lastName)
+    public void AddCustomer(string sociaSecurityNumber, string firstName, string lastName)
     {
-        IPerson? customer = new Customer(customerId, lastName, firstName);
+        int nextPersonId = _data.NextPersonId;
+        IPerson? customer = new Customer(default, sociaSecurityNumber, lastName, firstName);
+        customer.Id = nextPersonId;
         AddItem(customer);
     }
 

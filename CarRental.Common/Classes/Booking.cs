@@ -18,47 +18,12 @@ public class Booking : IBooking
 
     public Booking(IVehicle vehicle, IPerson person, int odometer, DateTime bookingDate, VehicleBookingStatuses vehicleBookingStatus)
     {
-        Id = 0;
         Vehicle = vehicle;
         Person = person;
         Odometer = odometer;
         BookingDate = bookingDate;
         VehicleBookingStatus = vehicleBookingStatus;
     }
-
-    /*public void RentVehicle(IVehicle vehicle, IPerson person, int odometer, DateTime bookingDate)
-    {
-        if (VehicleBookingStatus != VehicleBookingStatuses.Open)
-        {
-            throw new InvalidOperationException("Cannot rent a vehicle that is not open.");
-        }
-
-        if(vehicle is not null && person is not null)
-        {
-            Odometer = odometer;
-            BookingDate = bookingDate;
-            VehicleBookingStatus = VehicleBookingStatuses.Open;
-
-            if (vehicle.VehicleStatus is not VehicleStatuses.Booked)
-            {
-                vehicle.VehicleStatus = VehicleStatuses.Booked;
-            }
-        }
-        else
-        {
-            throw new ArgumentException("Invalid vehicle or customer");
-        }
-    }*/
-
-    /*public void ReturnVehicle(int? distance, DateTime returnDate)
-    {
-        Distance = distance;
-        ReturnDate = returnDate;
-        CalculateTotalCost();
-        VehicleBookingStatus = VehicleBookingStatuses.Closed;
-    }*/
-
-    // göra denna till en extension?
     public void CalculateTotalCost()
     {
         if (ReturnDate.HasValue && Distance.HasValue)

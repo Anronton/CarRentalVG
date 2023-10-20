@@ -18,9 +18,9 @@ public abstract class Vehicle : IVehicle
     public VehicleTypes VehicleType { get; init; }
     public VehicleStatuses VehicleStatus { get; set; }
 
-    public Vehicle(string regNo, string make, double odometer, double costKm, VehicleTypes vehicleType, VehicleStatuses vehicleStatus)
-    {
-        Id = 0;
+    public Vehicle(int id, string regNo, string make, double odometer, double costKm, VehicleTypes vehicleType, VehicleStatuses vehicleStatus)
+    {  
+        Id = id;
         RegNo = regNo;
         Make = make;
         Odometer = odometer;

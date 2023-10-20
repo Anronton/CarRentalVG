@@ -7,20 +7,11 @@ namespace CarRental.Data.Classes;
 
 public class CollectionData : IData
 {
-
-    //private int _nextVehicleId = 1;  
-    //private int _nextPersonId = 1;
-    //private int _nextBookingId = 1;
-
     readonly List<IPerson> _persons = new();
     readonly List<IVehicle> _vehicles = new();
     readonly List<IBooking> _bookings = new();
 
-    //public int NextVehicleId => _nextVehicleId++;
-    //public int NextPersonId => _nextPersonId++;
-    //public int NextBookingId => _nextBookingId++;
-
-
+   
     public int NextVehicleId => _vehicles.Count.Equals(0) ? 1 : _vehicles.Max(b => b.Id) + 1;
     public int NextPersonId => _persons.Count.Equals(0) ? 1 : _persons.Max(b => b.Id) + 1;
     public int NextBookingId => _bookings.Count.Equals(0) ? 1 : _bookings.Max(b => b.Id) + 1;
@@ -30,59 +21,18 @@ public class CollectionData : IData
     void SeedData()
     {
         //Customers
-        _persons.Add(new Customer(960321, "Jan", "Deg"));
-        _persons.Add(new Customer(690101, "John", "Doe"));
-        _persons.Add(new Customer(721111, "Jane", "Smith"));
+        _persons.Add(new Customer(1, "960321", "Jan", "Deg"));
+        _persons.Add(new Customer(2, "690101", "John", "Doe"));
+        _persons.Add(new Customer(3, "721111", "Jane", "Smith"));
 
         //Vehicles
-        _vehicles.Add(new Car("SIX666", "Volvo", 1000, 2.5, VehicleTypes.Combi, VehicleStatuses.Available));
-        _vehicles.Add(new Motorcycle("ABC123", "Yamaha", 3000, 1, VehicleTypes.Motorcycle, VehicleStatuses.Available));
-        _vehicles.Add(new Car("BKJ142", "Ford", 2500, 2, VehicleTypes.Van, VehicleStatuses.Available));
-        _vehicles.Add(new Car("BLZ420", "BMW", 5000, 5, VehicleTypes.Sedan, VehicleStatuses.Available));
-        _vehicles.Add(new Car("ORT141", "Saab", 10000, 1.5, VehicleTypes.Combi, VehicleStatuses.Available));
+        _vehicles.Add(new Car(1, "SIX666", "Volvo", 1000, 2.5, VehicleTypes.Combi, VehicleStatuses.Available));
+        _vehicles.Add(new Motorcycle(2, "ABC123", "Yamaha", 3000, 1, VehicleTypes.Motorcycle, VehicleStatuses.Available));
+        _vehicles.Add(new Car(3, "BKJ142", "Ford", 2500, 2, VehicleTypes.Van, VehicleStatuses.Available));
+        _vehicles.Add(new Car(4, "BLZ420", "BMW", 5000, 5, VehicleTypes.Sedan, VehicleStatuses.Available));
+        _vehicles.Add(new Car(5, "ORT141", "Saab", 10000, 1.5, VehicleTypes.Combi, VehicleStatuses.Available));
 
-        //Bookings
-
-
-        //var carToBook = _vehicles.SingleOrDefault(c => c.RegNo == "BKJ142");
-        //var customerJan = _persons.SingleOrDefault(p => p.CustomerId == 960321);
-        //if (carToBook is not null && customerJan is not null)
-        //{
-        //    carToBook.Odometer = 2500;
-        //    DateTime bookingDate1 = DateTime.Now;
-
-        //    Booking booking1 = new(
-        //        carToBook,
-        //        customerJan,
-        //        2500,
-        //        bookingDate1,
-        //        VehicleBookingStatuses.Open
-        //        );
-
-        //    booking1.RentVehicle(carToBook, customerJan, 2500, bookingDate1);
-        //    _bookings.Add(booking1);
-        //}
-
-        var motorcycleToBook = _vehicles.SingleOrDefault(v => v.RegNo == "ABC123");
-        var customerJane = _persons.SingleOrDefault(p => p.CustomerId == 721111);
-        if (motorcycleToBook is not null && customerJane is not null)
-        {
-            motorcycleToBook.Odometer = 3350;
-
-            DateTime bookingDate = DateTime.Now.AddDays(-1);
-
-            Booking booking2 = new(
-                motorcycleToBook,
-                customerJane,
-                3000,
-                bookingDate,
-                VehicleBookingStatuses.Closed
-            );
-            booking2.Distance = 3350;
-            booking2.ReturnDate = DateTime.Now;
-            _bookings.Add(booking2);
-        }
-
+        //bookings
     }
 
 
@@ -100,7 +50,8 @@ public class CollectionData : IData
 
                 vehicle.VehicleStatus = VehicleStatuses.Booked;
 
-                AddBooking(booking);
+                booking.Id = NextBookingId;
+                _bookings.Add(booking);
                 return booking;
             }
             else
@@ -139,23 +90,6 @@ public class CollectionData : IData
         }
         return null;
     }
-
-
-    public void AddCustomer(IPerson customer)
-    {
-        _persons.Add(customer);
-    }
-
-    public void AddVehicle(IVehicle vehicle)
-    {
-        _vehicles.Add(vehicle);
-    }
-
-    public void AddBooking(IBooking booking)
-    {
-        _bookings.Add(booking);
-    }
-
 
     public void Add<T>(T item)
     {

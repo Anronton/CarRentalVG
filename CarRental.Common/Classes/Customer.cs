@@ -5,16 +5,14 @@ namespace CarRental.Common.Classes;
 public class Customer : IPerson
 {
     public int Id { get; set; }
-    public int CustomerId { get; init; }
+    public string SocialSecurityNumber { get; init; }
     public string FirstName { get; init; }
     public string LastName { get; init; }
 
-    /*public Customer(int customerId, string firstName, string lastName) =>
-        (CustomerId, FirstName, LastName) = (customerId, firstName, lastName);*/
-    public Customer(int customerId, string firstName, string lastName)
+    public Customer(int id, string socialSecurityNumber, string firstName, string lastName)
     {
-        Id = 0;
-        CustomerId = customerId;
+        Id = id;
+        SocialSecurityNumber = socialSecurityNumber;
         FirstName = firstName;
         LastName = lastName;
     }

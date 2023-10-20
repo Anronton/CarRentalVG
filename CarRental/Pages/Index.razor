@@ -47,23 +47,10 @@
                 <td></td>
                 <td><button @onclick="AddVehicleToData" class="btn-sm">Add</button></td>
                 <td></td>
-                @*<td><label class="btn-sm btn-warning text-light">Processing</label></td>*@
+                @* <td><label class="btn-sm btn-warning text-light">Processing</label></td> *@
             </tr>
             @foreach (var vehicle in b.GetVehicles())
-            {
-                IPerson? customerForVehicle = null;
-                if (vehicleCustomerDictionary.TryGetValue(vehicle, out customerForVehicle))
-                {
-                    @if (customerForVehicle != null)
-                    {
-                        <p>Selected Customer: @GetCustomerInfo(customerForVehicle)</p>
-                    }
-                    else
-                    {
-                        <p>No customer selected for this vehicle.</p>
-                    }
-                }
-                
+            {     
                 <tr>
                     <th scope="row" class="align-middle">@vehicle.RegNo</th>
                     <td class="align-middle">@vehicle.Make</td>
@@ -71,27 +58,32 @@
                     <td class="align-middle">@vehicle.CostKm</td>
                     <td class="align-middle">@vehicle.VehicleType</td>
                     <td class="align-middle">@vehicle.DayCost()</td>
+
+
                     <td>
                         <select class="form-control" @bind="selectedCustomerId">
                             <option value="0"></option>
                             @foreach(var person in b.GetPersons())
                             {
-                                <option value="@person.CustomerId">@($"{person.FirstName} {person.LastName} ({person.CustomerId})")</option>
+                                <option value="@person.SocialSecurityNumber">@($"{person.FirstName} {person.LastName} ({person.SocialSecurityNumber})")</option>
                             }
                         </select> 
                     </td>
                     
+
                     <td>
                         @if (vehicle.VehicleStatus == CarRental.Common.Enums.VehicleStatuses.Available)
                         {
-                            <button @onclick="() => RentVehicle(customerForVehicle?.CustomerId, vehicle.Id)" class="btn-sm">Rent</button>
+                            <button @* @onclick="() => RentVehicle(this.SelectedPerson, this.SelectedVehicle.Id)"  *@class="btn-sm">Rent</button>
                         }
                         @if (vehicle.VehicleStatus == CarRental.Common.Enums.VehicleStatuses.Booked)
                         {
-                            <button @onclick="() => ReturnVehicle(vehicle.Id)" class="btn-sm">Return</button>
+                            <button @* @onclick="() => ReturnVehicle(vehicle.Id)" *@ class="btn-sm">Return</button>
                             <input class="form-control" placeholder="Distance" @bind="Distance" />
                         }
                     </td> 
+
+
                     <td>
                         <label class=@(vehicle.VehicleStatus == Common.Enums.VehicleStatuses.Booked ? "btn-sm btn-danger" : "btn-sm btn-dark")>@vehicle.VehicleStatus</label>
                     </td>                       
@@ -122,7 +114,7 @@
             {
                 <tr>
                     <th scope="row" class="align-middle">@booking.Vehicle.RegNo</th>
-                    <td class="align-middle">@($"{booking.Person.FirstName} {booking.Person.LastName} ({booking.Person.CustomerId})")</td>
+                    <td class="align-middle">@($"{booking.Person.FirstName} {booking.Person.LastName} ({booking.Person.SocialSecurityNumber})")</td>
                     <td class="align-middle">@booking.Odometer</td>
                     <td class="align-middle">@booking.Distance</td>
                     <td class="align-middle">@booking.BookingDate.ToShortDateString()</td>
@@ -152,7 +144,7 @@
         </thead>
         <tbody>
             <tr>
-                <td><input @bind="customerId" class="form-control" placeholder="SSN" /></td>
+                <td><input @bind="SocialSecurityNumber" class="form-control" placeholder="SSN" /></td>
                 <td><input @bind="lastName" class="form-control" placeholder="Last Name" /></td>
                 <td><input @bind="firstName" class="form-control" placeholder="First Name" /></td>
                 <td><button @onclick="AddCustomerToData" class="btn-sm">Add</button></td>
@@ -160,7 +152,7 @@
             @foreach(var person in b.GetPersons())
             {
                 <tr>
-                    <th scope="row">@person.CustomerId</th>
+                    <th scope="row">@person.SocialSecurityNumber</th>
                     <td>@person.LastName</td>
                     <td>@person.FirstName</td>
                     <td></td>
@@ -170,53 +162,35 @@
     </table>
 </div>
 
-<div class="alert alert-danger" role="alert" style="display: @(string.IsNullOrEmpty(errorMessage) ? "none" : "block")">
+@* <div class="alert alert-danger" role="alert" style="display: @(string.IsNullOrEmpty(errorMessage) ? "none" : "block")">
     @errorMessage
-</div>
+</div> *@
 @code{
     private int SelectedPerson = 0;
     
     private int selectedCustomerId = 0;
-    private string? errorMessage = null;
-    //
-    private string GetCustomerInfo(IPerson customer)
-    {
-        if (customer != null)
-        {
-            return $"{customer.FirstName} {customer.LastName} ({customer.CustomerId})";
-        }
-        else
-        {
-            return "No customer selected for this vehicle.";
-        }
-    }
-
-    private Dictionary<IVehicle, IPerson?> vehicleCustomerDictionary;
-
-    protected override void OnInitialized()
-    {
-        vehicleCustomerDictionary = b.GetVehicleCustomerDictionary();
-    }
+    // private string? errorMessage = null;
+    
 
     private int? Distance;
     private CarRental.Common.Interfaces.IVehicle? SelectedVehicle { get; set; }
 
     //
-    private void ShowErrorMessage(string message)
-    {
-        errorMessage = message;
-    }
+    // private void ShowErrorMessage(string message)
+    // {
+    //     errorMessage = message;
+    // }
     private string? RegNo;
     private string? Make;
     private double? Odometer;
     private double? CostKm;
     private string? SelectedVehicleType;
 
-    private int? customerId;
+    private string? SocialSecurityNumber;
     private string? lastName;
     private string? firstName;
 
-    private void ReturnVehicle(int vehicleId)
+    /*private void ReturnVehicle(int vehicleId)
     {
         if (Distance.HasValue)
         {
@@ -241,9 +215,9 @@
         {
             ShowErrorMessage("Please enter the distance.");
         }
-    }
+    }*/
 
-    private void RentVehicle(int? customerId, int vehicleId)
+    /*private void RentVehicle(int? customerId, int vehicleId)
     {
         if (customerId.HasValue)
         {
@@ -264,14 +238,14 @@
         {
             ShowErrorMessage("Please select a valid customer.");
         }
-    }
+    }*/
 
     private void AddVehicleToData()
     {
         if(!string.IsNullOrWhiteSpace(RegNo) && !string.IsNullOrWhiteSpace(Make) && Odometer.HasValue && CostKm.HasValue && !string.IsNullOrEmpty(SelectedVehicleType))
         {
             var vehicleTypeEnum = b.GetVehicleType(SelectedVehicleType);
-            b.AddVehicle(RegNo, Make, Odometer.Value, CostKm.Value, vehicleTypeEnum, SelectedPerson);
+            b.AddVehicle(RegNo, Make, Odometer.Value, CostKm.Value, vehicleTypeEnum);
 
             RegNo = "";
             Make = "";
@@ -286,13 +260,12 @@
 
     private void AddCustomerToData()
     {
-        if(customerId != null && lastName != null && firstName != null )
+        if (SocialSecurityNumber != null && lastName != null && firstName != null)
         {
-            b.AddCustomer(customerId.Value, lastName, firstName);
-            customerId = null;
+            b.AddCustomer(SocialSecurityNumber, lastName, firstName);
+            SocialSecurityNumber = "";
             lastName = "";
             firstName = "";
         }
     }
-    // BLäääääh "Please select a valid customer."
 }

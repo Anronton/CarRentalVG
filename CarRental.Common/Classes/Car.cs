@@ -7,6 +7,6 @@ public class Car : Vehicle
 {
 
 
-    public Car(string regNo, string make, double odometer, double costKm, VehicleTypes vehicleType, VehicleStatuses vehicleStatus) :
-       base (regNo, make, odometer, costKm, vehicleType, vehicleStatus) {}
+    public Car(int id, string regNo, string make, double odometer, double costKm, VehicleTypes vehicleType, VehicleStatuses vehicleStatus) :
+       base (id, regNo, make, odometer, costKm, vehicleType, vehicleStatus) {}
 }
