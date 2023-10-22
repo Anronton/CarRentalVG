@@ -1,6 +1,7 @@
 ﻿using CarRental.Common.Classes;
 using CarRental.Common.Enums;
 using CarRental.Common.Interfaces;
+using CarRental.Common.Extensions;
 using System.Linq.Expressions;
 
 namespace CarRental.Data.Classes;
@@ -33,6 +34,21 @@ public class CollectionData : IData
         _vehicles.Add(new Car(5, "ORT141", "Saab", 10000, 1.5, VehicleTypes.Combi, VehicleStatuses.Available));
 
         //bookings
+
+        IBooking? booking = RentVehicle(2, 3);
+        IVehicle? vehicle = booking.Vehicle;
+        double dayCost = vehicle.DayCost();
+
+        
+        booking.CalculateTotalCost(dayCost, vehicle.CostKm);
+        booking.Distance = 350;
+
+        ReturnVehicle(2);
+
+
+        // Hmm kanske ska vi implementera: booking.CalculateTotalCost(dayCost, vehicle.CostKm); direkt i metoden?
+        // njaa nästa steg är att kunna skapa en bokning då Inputen skiftar!
+
     }
 
 
@@ -46,7 +62,9 @@ public class CollectionData : IData
         {
             if(vehicle.VehicleStatus == VehicleStatuses.Available)
             {
-                IBooking booking = new Booking(vehicle, customer, (int)vehicle.Odometer, DateTime.Now, VehicleBookingStatuses.Open);
+                int initialOdometer = vehicle.Odometer;
+
+                IBooking booking = new Booking(vehicle, customer, initialOdometer, DateTime.Now, VehicleBookingStatuses.Open);
 
                 vehicle.VehicleStatus = VehicleStatuses.Booked;
 
@@ -74,10 +92,13 @@ public class CollectionData : IData
 
                 if (booking != null)
                 {
+                    booking.VehicleBookingStatus = VehicleBookingStatuses.Closed;
 
                     vehicle.VehicleStatus = VehicleStatuses.Available;
 
-                    vehicle.Odometer = (double)(booking.Distance ?? vehicle.Odometer);
+                    int distance = booking.Distance ?? 0;
+                    vehicle.Odometer += distance;
+                    booking.ReturnDate = DateTime.Now;
 
                     return booking;
                 }

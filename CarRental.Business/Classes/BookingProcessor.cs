@@ -68,18 +68,7 @@ public class BookingProcessor
     //  await Task.Delay(10000) // fakeväntar 10sekunder
     //}
 
-    //Vi gör en temporär Dictionary
-    //private Dictionary<IVehicle, IPerson?> vehicleCustomerDictionary = new Dictionary<IVehicle, IPerson?>();
-    //
-
-    //Temporär metod för dictionaryn
-    //public Dictionary<IVehicle, IPerson?> GetVehicleCustomerDictionary()
-    //{
-    //    return vehicleCustomerDictionary;
-    //}
-    //
-
-    //gör en temporär RentVehicle innan vi gör async metoden.
+    
     //public void RentVehicle(int vehicleId, int customerId)
     //{
     //    var vehicle = GetVehicle(vehicleId);
@@ -87,54 +76,44 @@ public class BookingProcessor
 
     //    if (vehicle != null && customer != null)
     //    {
+    //        var initialOdometer = (int)vehicle.Odometer;
 
-    //        vehicleCustomerDictionary[vehicle] = customer;
-
-
-    //        var booking = new Booking(vehicle, customer, (int)vehicle.Odometer, DateTime.Now, VehicleBookingStatuses.Open);
+    //        var booking = new Booking(vehicle, customer, initialOdometer, DateTime.Now, VehicleBookingStatuses.Open);
     //        vehicle.VehicleStatus = VehicleStatuses.Booked;
+
     //        AddItem(booking);
     //    }
 
     //}
-    //
 
-    /*public IBooking? ReturnVehicle(int vehicleId, int distance)
-    {
 
-        var booking = _data.Get<IBooking>(b => b.Id == vehicleId).FirstOrDefault();
+    //public void ReturnVehicle(int vehicleId, int distance)
+    //{
 
-        if (booking == null)
-        {
-            throw new Exception("Booking not found");
-        }
+    //    var booking = _data.Get<IBooking>(b => b.Id == vehicleId && b.VehicleBookingStatus == VehicleBookingStatuses.Open).FirstOrDefault();
 
-        if (booking.VehicleBookingStatus != VehicleBookingStatuses.Open)
-        {
-            throw new Exception("Booking is not in an open state");
-        }
+    //    if (booking == null)
+    //    {
+    //        throw new Exception("Booking not found");
+    //    }
 
-        booking.Distance = distance;
+    //    var vehicle = GetVehicle(vehicleId);
+    //    if(vehicle is null)
+    //    {
+    //        throw new Exception("Vehicle not found");
+    //    }
 
-        _data.Add(booking);
+    //    booking.VehicleBookingStatus = VehicleBookingStatuses.Closed;
+    //    vehicle.VehicleStatus = VehicleStatuses.Available;
 
-        var vehicle = _data.Get<IVehicle>(v => v.Id == vehicleId).FirstOrDefault();
+    //    vehicle.Odometer += distance;
 
-        if (vehicle != null)
-        {
-            vehicle.VehicleStatus = VehicleStatuses.Available;
-            vehicle.Odometer = (double)(booking.Distance ?? vehicle.Odometer);
+    //    AddItem(booking);
+    //    AddItem(vehicle);
+        
+    //}
 
-            _data.Add(vehicle);
-        }
-        else
-        {
-            throw new Exception("Vehicle not found");
-        }
-        return booking;
-    }*/
-
-    public void AddVehicle(string regNo, string make, double odometer, double costKm, VehicleTypes vehicleType)
+    public void AddVehicle(string regNo, string make, int odometer, double costKm, VehicleTypes vehicleType)
     {
         int nextVehicleId = _data.NextVehicleId;
         IVehicle? vehicle;
@@ -159,10 +138,7 @@ public class BookingProcessor
         {
             throw new Exception();
         }
-        //if (customerId.HasValue)
-        //{
-        //    var customer = GetPerson(customerId.Value);
-        //}
+        
         vehicle.Id = nextVehicleId;
         AddItem(vehicle);
         

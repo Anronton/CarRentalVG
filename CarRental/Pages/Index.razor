@@ -59,18 +59,23 @@
                     <td class="align-middle">@vehicle.VehicleType</td>
                     <td class="align-middle">@vehicle.DayCost()</td>
 
-
                     <td>
-                        <select class="form-control" @bind="selectedCustomerId">
-                            <option value="0"></option>
-                            @foreach(var person in b.GetPersons())
-                            {
-                                <option value="@person.SocialSecurityNumber">@($"{person.FirstName} {person.LastName} ({person.SocialSecurityNumber})")</option>
-                            }
-                        </select> 
+                        @if (vehicle.VehicleStatus == Common.Enums.VehicleStatuses.Available)
+                        {
+                            <select class="form-control" @bind="selectedCustomerId">
+                                <option value="0"></option>
+                                @foreach (var person in b.GetPersons())
+                                {
+                                    <option value="@person.SocialSecurityNumber">@($"{person.FirstName} {person.LastName} ({person.SocialSecurityNumber})")</option>
+                                }
+                            </select>
+                        }
+                        @if(vehicle.VehicleStatus == Common.Enums.VehicleStatuses.Booked)
+                        {
+                            <input class="form-control" placeholder="Distance" @bind="Distance" />
+                        }
                     </td>
                     
-
                     <td>
                         @if (vehicle.VehicleStatus == CarRental.Common.Enums.VehicleStatuses.Available)
                         {
@@ -79,10 +84,8 @@
                         @if (vehicle.VehicleStatus == CarRental.Common.Enums.VehicleStatuses.Booked)
                         {
                             <button @* @onclick="() => ReturnVehicle(vehicle.Id)" *@ class="btn-sm">Return</button>
-                            <input class="form-control" placeholder="Distance" @bind="Distance" />
                         }
                     </td> 
-
 
                     <td>
                         <label class=@(vehicle.VehicleStatus == Common.Enums.VehicleStatuses.Booked ? "btn-sm btn-danger" : "btn-sm btn-dark")>@vehicle.VehicleStatus</label>
@@ -116,11 +119,17 @@
                     <th scope="row" class="align-middle">@booking.Vehicle.RegNo</th>
                     <td class="align-middle">@($"{booking.Person.FirstName} {booking.Person.LastName} ({booking.Person.SocialSecurityNumber})")</td>
                     <td class="align-middle">@booking.Odometer</td>
-                    <td class="align-middle">@booking.Distance</td>
+                    <td class="align-middle">@booking.Distance</td> 
                     <td class="align-middle">@booking.BookingDate.ToShortDateString()</td>
                     <td class="align-middle">@(booking.ReturnDate?.ToShortDateString() ?? "")</td>
                     <td class="align-middle">
-                    @{if (booking.TotalCost != null){@booking.TotalCost.Value.ToString("F2")} }
+                        @{
+                            booking.CalculateTotalCost(booking.Vehicle.DayCost(), booking.Vehicle.CostKm);
+                            if(booking.TotalCost is not null)
+                            {
+                                @booking.TotalCost.Value.ToString("F2")    
+                            }
+                        }
                     </td>
                     <td>
                         <label class=@(booking.VehicleBookingStatus == Common.Enums.VehicleBookingStatuses.Closed ? "btn-sm btn-danger" : "btn-sm btn-success")>@booking.VehicleBookingStatus</label>
@@ -245,7 +254,7 @@
         if(!string.IsNullOrWhiteSpace(RegNo) && !string.IsNullOrWhiteSpace(Make) && Odometer.HasValue && CostKm.HasValue && !string.IsNullOrEmpty(SelectedVehicleType))
         {
             var vehicleTypeEnum = b.GetVehicleType(SelectedVehicleType);
-            b.AddVehicle(RegNo, Make, Odometer.Value, CostKm.Value, vehicleTypeEnum);
+            b.AddVehicle(RegNo, Make, (int)Odometer.Value, CostKm.Value, vehicleTypeEnum);
 
             RegNo = "";
             Make = "";

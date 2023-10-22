@@ -7,7 +7,7 @@ public interface IVehicle : IEntity
     
     public string RegNo { get; init; }
     public string Make { get; init; }
-    public double Odometer { get; set; }
+    public int Odometer { get; set; }
     public double CostKm { get; init; }
     public VehicleTypes VehicleType { get; init; }
     public VehicleStatuses VehicleStatus { get; set; }

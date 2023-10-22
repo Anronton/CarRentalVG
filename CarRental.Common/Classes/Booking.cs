@@ -24,19 +24,4 @@ public class Booking : IBooking
         BookingDate = bookingDate;
         VehicleBookingStatus = vehicleBookingStatus;
     }
-    public void CalculateTotalCost()
-    {
-        if (ReturnDate.HasValue && Distance.HasValue)
-        {
-            int distance = Distance.Value - Odometer;
-            double days = (ReturnDate.Value - BookingDate).TotalDays;
-            double firstDayCost = Math.Max(1, Vehicle.DayCost());
-
-            TotalCost = (firstDayCost + days * Vehicle.DayCost()) + distance * Vehicle.CostKm;
-        }
-        else
-        {
-            TotalCost = null;
-        }
-    }
 }
