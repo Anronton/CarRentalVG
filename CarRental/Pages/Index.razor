@@ -6,11 +6,11 @@
 
 <PageTitle>Car Rental</PageTitle>
 
-<h1 class="display-3">Car Rental</h1>
+<h1 class="display-4">Car Rental</h1>
 
-@*<div class="alert alert-danger" role="alert">
-    A simple danger alert—check it out!
-</div>*@
+@* <div class="alert alert-danger" role="alert" style="display: @(string.IsNullOrEmpty(errorMessage) ? "none" : "block")">
+    @errorMessage
+</div> *@
 
 <div>
     <div class="heading-font display-6">Vehicles</div>
@@ -44,9 +44,9 @@
                     </select>
                 </td>
                 <td></td>
-                <td><button @onclick="AddVehicleToData" class="btn-sm">Add</button></td>
+                <td><button @onclick="AddVehicleToData" class="btn btn-sm btn-outline-success">Add</button></td>
                 <td></td>
-                @* <td><label class="btn-sm btn-warning text-light">Processing</label></td> *@
+                <td><label class="btn-sm btn-warning text-light">Processing</label></td> <!-- Kommer bara dyka upp sen med async -->
             </tr>
             @foreach (var vehicle in b.GetVehicles())
             {     
@@ -76,13 +76,13 @@
                     </td>
                     
                     <td>
-                        @if (vehicle.VehicleStatus == CarRental.Common.Enums.VehicleStatuses.Available)
+                        @if (vehicle.VehicleStatus == Common.Enums.VehicleStatuses.Available)
                         {
-                            <button @onclick="() => RentVehicle(vehicle.Id)" class="btn-sm">Rent</button>
+                            <button @onclick="() => RentVehicle(vehicle.Id)" class="btn btn-sm btn-outline-primary">Rent</button>
                         }
-                        @if (vehicle.VehicleStatus == CarRental.Common.Enums.VehicleStatuses.Booked)
+                        @if (vehicle.VehicleStatus == Common.Enums.VehicleStatuses.Booked)
                         {
-                            <button @onclick="() => ReturnVehicle(vehicle.Id, Distance)" class="btn-sm">Return</button>
+                            <button @onclick="() => ReturnVehicle(vehicle.Id, Distance)" class="btn btn-sm btn-outline-success">Return</button>
                         }
                     </td> 
 
@@ -160,7 +160,7 @@
                 <td><input @bind="SocialSecurityNumber" class="form-control" placeholder="SSN" /></td>
                 <td><input @bind="lastName" class="form-control" placeholder="Last Name" /></td>
                 <td><input @bind="firstName" class="form-control" placeholder="First Name" /></td>
-                <td><button @onclick="AddCustomerToData" class="btn-sm">Add</button></td>
+                <td><button @onclick="AddCustomerToData" class="btn btn-sm btn-outline-success">Add</button></td>
             </tr>
             @foreach(var person in b.GetPersons())
             {
@@ -175,18 +175,11 @@
     </table>
 </div>
 
-<div class="alert alert-danger" role="alert" style="display: @(string.IsNullOrEmpty(errorMessage) ? "none" : "block")">
-    @errorMessage
-</div>
 @code{
 
     private int selectedCustomerId = 0;
     private string? errorMessage = null;
     private int? Distance;
-    private void ShowErrorMessage(string message)
-    {
-        errorMessage = message;
-    }
     private string? RegNo;
     private string? Make;
     private double? Odometer;
@@ -196,7 +189,10 @@
     private string? lastName;
     private string? firstName;
 
-
+    private void ShowErrorMessage(string message)
+    {
+        errorMessage = message;
+    }
 
     private void RentVehicle(int vehicleId)
     {
