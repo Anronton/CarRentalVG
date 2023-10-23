@@ -36,11 +36,12 @@ public class CollectionData : IData
         //bookings
 
         IBooking? booking = RentVehicle(2, 3);
-        IVehicle? vehicle = booking.Vehicle;
-        double dayCost = vehicle.DayCost();
-        booking.Distance = 350;
 
-        ReturnVehicle(2);
+        if (booking != null)
+        {
+            booking.Distance = 350;
+            ReturnVehicle(2);
+        }
     }
 
 
@@ -80,7 +81,7 @@ public class CollectionData : IData
         {
             if (vehicle.VehicleStatus == VehicleStatuses.Booked)
             {
-                IBooking? booking = _bookings.SingleOrDefault(b => b.Vehicle ==  vehicle && b.VehicleBookingStatus == VehicleBookingStatuses.Open);
+                IBooking? booking = _bookings.SingleOrDefault(b => b.Vehicle == vehicle && b.VehicleBookingStatus == VehicleBookingStatuses.Open);
 
                 if (booking != null)
                 {

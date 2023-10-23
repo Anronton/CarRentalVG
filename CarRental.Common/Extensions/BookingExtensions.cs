@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace CarRental.Common.Extensions;
 
-public static class CollectionExtensions
+public static class BookingExtensions
 {
     public static void CalculateTotalCost(this IBooking booking, double dayCost, double costKm)
     {
@@ -32,5 +32,4 @@ public static class CollectionExtensions
             booking.TotalCost = null;
         }
     }
-
 }
