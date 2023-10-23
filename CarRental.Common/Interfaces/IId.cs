@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace CarRental.Common.Interfaces
 {
-    public interface IEntity
+    public interface IId
     {
         int Id { get; set; }
     }

@@ -119,7 +119,7 @@
                     <th scope="row" class="align-middle">@booking.Vehicle.RegNo</th>
                     <td class="align-middle">@($"{booking.Person.FirstName} {booking.Person.LastName} ({booking.Person.SocialSecurityNumber})")</td>
                     <td class="align-middle">@booking.Odometer</td>
-                    <td class="align-middle">@booking.Distance</td> 
+                    <td class="align-middle">@(booking.Odometer + (booking.Distance ?? 0))</td> <!-- Innan var det enbart booking.Distance -->
                     <td class="align-middle">@booking.BookingDate.ToShortDateString()</td>
                     <td class="align-middle">@(booking.ReturnDate?.ToShortDateString() ?? "")</td>
                     <td class="align-middle">

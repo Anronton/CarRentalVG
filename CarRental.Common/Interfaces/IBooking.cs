@@ -3,7 +3,7 @@ using CarRental.Common.Enums;
 
 namespace CarRental.Common.Interfaces;
 
- public interface IBooking : IEntity
+ public interface IBooking : IId
 {
     
     public IVehicle Vehicle { get; init; }

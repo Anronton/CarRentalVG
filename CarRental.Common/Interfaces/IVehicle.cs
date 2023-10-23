@@ -2,7 +2,7 @@
 
 namespace CarRental.Common.Interfaces;
 
-public interface IVehicle : IEntity
+public interface IVehicle : IId
 {
     
     public string RegNo { get; init; }

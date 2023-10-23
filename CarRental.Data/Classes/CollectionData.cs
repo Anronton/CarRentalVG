@@ -38,17 +38,9 @@ public class CollectionData : IData
         IBooking? booking = RentVehicle(2, 3);
         IVehicle? vehicle = booking.Vehicle;
         double dayCost = vehicle.DayCost();
-
-        
-        booking.CalculateTotalCost(dayCost, vehicle.CostKm);
         booking.Distance = 350;
 
         ReturnVehicle(2);
-
-
-        // Hmm kanske ska vi implementera: booking.CalculateTotalCost(dayCost, vehicle.CostKm); direkt i metoden?
-        // njaa nästa steg är att kunna skapa en bokning då Inputen skiftar!
-
     }
 
 
@@ -99,6 +91,9 @@ public class CollectionData : IData
                     int distance = booking.Distance ?? 0;
                     vehicle.Odometer += distance;
                     booking.ReturnDate = DateTime.Now;
+
+                    double dayCost = vehicle.DayCost();
+                    booking.CalculateTotalCost(dayCost, vehicle.CostKm);
 
                     return booking;
                 }
