@@ -46,9 +46,9 @@ public class CollectionData : IData
 
 
 
-    public IBooking? RentVehicle(int VehicleId, int customerId)
+    public IBooking? RentVehicle(int vehicleId, int customerId)
     {
-        IVehicle? vehicle = _vehicles.SingleOrDefault(v => v.Id == VehicleId);
+        IVehicle? vehicle = _vehicles.SingleOrDefault(v => v.Id == vehicleId);
         IPerson? customer = _persons.SingleOrDefault(p => p.Id == customerId);
 
         if (vehicle != null && customer != null)
@@ -73,9 +73,9 @@ public class CollectionData : IData
         return null;
     }
 
-    public IBooking? ReturnVehicle(int VehicleId)
+    public IBooking? ReturnVehicle(int vehicleId)
     {
-        IVehicle? vehicle = _vehicles.SingleOrDefault(v => v.Id == VehicleId);
+        IVehicle? vehicle = _vehicles.SingleOrDefault(v => v.Id == vehicleId);
 
         if (vehicle != null)
         {
@@ -194,6 +194,7 @@ public class CollectionData : IData
         return _vehicles;
     }
 
+    public string[] VehicleBookingStatusNames => Enum.GetNames(typeof(VehicleBookingStatuses));
     public string[] VehicleStatusNames => Enum.GetNames(typeof(VehicleStatuses));
     public string[] VehicleTypeNames => Enum.GetNames(typeof(VehicleTypes));
     public VehicleTypes GetVehicleType(string name)

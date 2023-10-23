@@ -1,5 +1,5 @@
-﻿using CarRental.Common.Classes;
-using CarRental.Common.Enums;
+﻿using CarRental.Common.Classes; // ph
+using CarRental.Common.Enums; // ph
 using CarRental.Common.Extensions;
 using CarRental.Common.Interfaces;
 using System.Linq.Expressions;
@@ -36,7 +36,8 @@ public class BookingProcessor
     //    var bookings = _data.Get<IBooking>(b => b.Id == bookingId);
     //    return bookings.FirstOrDefault();
     //}
-    public void Voidar() { }
+    
+
     //Ovan har vi kommenterat ut och gör en snabb band-aid lösning av den under:
     private IBooking? GetBookingByVehicleId(int vehicleId)
     {
@@ -97,21 +98,10 @@ public class BookingProcessor
 
     public void ReturnVehicle(int vehicleId, int distance)
     {
-        var booking = GetBookingByVehicleId(vehicleId);
+        var booking = GetBookingByVehicleId(vehicleId) ?? throw new Exception("Booking not found");
+        var vehicle = GetVehicle(vehicleId) ?? throw new Exception("Vehicle not found");
 
-        if (booking == null)
-        {
-            throw new Exception("Booking not found");
-        }
-
-        var vehicle = GetVehicle(vehicleId);
-
-        if (vehicle == null)
-        {
-            throw new Exception("Vehicle not found");
-        }
-        
-        if(booking.VehicleBookingStatus == VehicleBookingStatuses.Open)
+        if (booking.VehicleBookingStatus == VehicleBookingStatuses.Open)
         {
             booking.VehicleBookingStatus = VehicleBookingStatuses.Closed;
             vehicle.VehicleStatus = VehicleStatuses.Available;
@@ -165,18 +155,18 @@ public class BookingProcessor
     public void AddCustomer(string sociaSecurityNumber, string firstName, string lastName)
     {
         int nextPersonId = _data.NextPersonId;
-        IPerson? customer = new Customer(default, sociaSecurityNumber, lastName, firstName);
-        customer.Id = nextPersonId;
+        IPerson? customer = new Customer(default, sociaSecurityNumber, lastName, firstName)
+        {
+            Id = nextPersonId
+        };
         AddItem(customer);
     }
 
+    public string[] VehicleBookingStatusNames => _data.VehicleBookingStatusNames;
     public string[] VehicleStatusNames => _data.VehicleStatusNames;
-    public string[] VehicleTypeNames => _data.VehicleTypeNames;
+    //public string[] VehicleTypeNames => _data.VehicleTypeNames;
     public VehicleTypes GetVehicleType(string name) => _data.GetVehicleType(name);
-    public string[] GetVehicleTypeNames()
-    {
-        return _data.VehicleTypeNames;
-    }
+    
     public VehicleTypes[] GetVehicleTypes()
     {
         return Enum.GetValues(typeof(VehicleTypes)).Cast<VehicleTypes>().ToArray();

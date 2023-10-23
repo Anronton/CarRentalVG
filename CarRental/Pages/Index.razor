@@ -1,6 +1,5 @@
 ﻿@page "/"
 @using CarRental.Common.Extensions
-@using CarRental.Common.Interfaces @* Temporär *@
 @using CarRental.Business.Classes 
 @inject BookingProcessor b
 
@@ -193,10 +192,11 @@
     private double? Odometer;
     private double? CostKm;
     private string? SelectedVehicleType;
-    private int SelectedPerson;
     private string? SocialSecurityNumber;
     private string? lastName;
     private string? firstName;
+
+
 
     private void RentVehicle(int vehicleId)
     {
@@ -253,8 +253,6 @@
             Odometer = null;
             CostKm = null;
             SelectedVehicleType = null;
-
-            SelectedPerson = default;
         }
 
     }

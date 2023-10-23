@@ -13,9 +13,10 @@ public interface IData
     int NextVehicleId { get; }
     int NextPersonId { get; }
     int NextBookingId { get; }
-    IBooking? RentVehicle(int VehicleId, int customerId);
-    IBooking? ReturnVehicle(int VehicleId);
+    IBooking? RentVehicle(int vehicleId, int customerId);
+    IBooking? ReturnVehicle(int vehicleId);
 
+    public string[] VehicleBookingStatusNames => Enum.GetNames(typeof(VehicleBookingStatuses));
     public string[] VehicleStatusNames => Enum.GetNames(typeof(VehicleStatuses));
     public string[] VehicleTypeNames => Enum.GetNames(typeof(VehicleTypes));
     public VehicleTypes GetVehicleType(string name) =>
