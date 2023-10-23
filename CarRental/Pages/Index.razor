@@ -66,7 +66,7 @@
                                 <option value="0"></option>
                                 @foreach (var person in b.GetPersons())
                                 {
-                                    <option value="@person.SocialSecurityNumber">@($"{person.FirstName} {person.LastName} ({person.SocialSecurityNumber})")</option>
+                                    <option value="@person.Id">@($"{person.FirstName} {person.LastName} ({person.SocialSecurityNumber})")</option>
                                 }
                             </select>
                         }
@@ -79,11 +79,11 @@
                     <td>
                         @if (vehicle.VehicleStatus == CarRental.Common.Enums.VehicleStatuses.Available)
                         {
-                            <button @* @onclick="() => RentVehicle(this.SelectedPerson, this.SelectedVehicle.Id)"  *@class="btn-sm">Rent</button>
+                            <button @onclick="() => RentVehicle(vehicle.Id)" class="btn-sm">Rent</button>
                         }
                         @if (vehicle.VehicleStatus == CarRental.Common.Enums.VehicleStatuses.Booked)
                         {
-                            <button @* @onclick="() => ReturnVehicle(vehicle.Id)" *@ class="btn-sm">Return</button>
+                            <button @onclick="() => ReturnVehicle(vehicle.Id, Distance)" class="btn-sm">Return</button>
                         }
                     </td> 
 
@@ -119,13 +119,18 @@
                     <th scope="row" class="align-middle">@booking.Vehicle.RegNo</th>
                     <td class="align-middle">@($"{booking.Person.FirstName} {booking.Person.LastName} ({booking.Person.SocialSecurityNumber})")</td>
                     <td class="align-middle">@booking.Odometer</td>
-                    <td class="align-middle">@(booking.Odometer + (booking.Distance ?? 0))</td> <!-- Innan var det enbart booking.Distance -->
+                    <td class="align-middle">
+                        @if (booking.Distance.HasValue)
+                        {
+                            @(booking.Odometer + booking.Distance.Value)
+                        }
+                    </td>
                     <td class="align-middle">@booking.BookingDate.ToShortDateString()</td>
                     <td class="align-middle">@(booking.ReturnDate?.ToShortDateString() ?? "")</td>
                     <td class="align-middle">
                         @{
                             booking.CalculateTotalCost(booking.Vehicle.DayCost(), booking.Vehicle.CostKm);
-                            if(booking.TotalCost is not null)
+                            if(booking.TotalCost != null)
                             {
                                 @booking.TotalCost.Value.ToString("F2")    
                             }
@@ -171,83 +176,70 @@
     </table>
 </div>
 
-@* <div class="alert alert-danger" role="alert" style="display: @(string.IsNullOrEmpty(errorMessage) ? "none" : "block")">
+<div class="alert alert-danger" role="alert" style="display: @(string.IsNullOrEmpty(errorMessage) ? "none" : "block")">
     @errorMessage
-</div> *@
+</div>
 @code{
-    private int SelectedPerson = 0;
-    
+
     private int selectedCustomerId = 0;
-    // private string? errorMessage = null;
-    
-
+    private string? errorMessage = null;
     private int? Distance;
-    private CarRental.Common.Interfaces.IVehicle? SelectedVehicle { get; set; }
-
-    //
-    // private void ShowErrorMessage(string message)
-    // {
-    //     errorMessage = message;
-    // }
+    private void ShowErrorMessage(string message)
+    {
+        errorMessage = message;
+    }
     private string? RegNo;
     private string? Make;
     private double? Odometer;
     private double? CostKm;
     private string? SelectedVehicleType;
-
+    private int SelectedPerson;
     private string? SocialSecurityNumber;
     private string? lastName;
     private string? firstName;
 
-    /*private void ReturnVehicle(int vehicleId)
+    private void RentVehicle(int vehicleId)
     {
-        if (Distance.HasValue)
+        if (vehicleId != 0 && selectedCustomerId != 0)
         {
-            try
-            {
-                b.ReturnVehicle(vehicleId, Distance.Value);
+            var selectedCustomer = b.GetPerson(selectedCustomerId);
 
-                var selectedVehicle = b.GetVehicle(vehicleId);
-                if (selectedVehicle != null)
+            if (selectedCustomer != null)
+            {
+
+                var booking = b.RentVehicle(vehicleId, selectedCustomer.Id);
+
+                if (booking != null)
                 {
-                    selectedVehicle.VehicleStatus = CarRental.Common.Enums.VehicleStatuses.Available;
-                    selectedVehicle.Odometer = (double)(Distance.HasValue ? Distance.Value : selectedVehicle.Odometer);
-                    vehicleCustomerDictionary[selectedVehicle] = null;
+                    selectedCustomerId = 0;
                 }
-            }
-            catch (Exception ex)
-            {
-                ShowErrorMessage("An error occurred: " + ex.Message);
-            }
-        }
-        else
-        {
-            ShowErrorMessage("Please enter the distance.");
-        }
-    }*/
-
-    /*private void RentVehicle(int? customerId, int vehicleId)
-    {
-        if (customerId.HasValue)
-        {
-            var selectedVehicle = b.GetVehicle(vehicleId);
-
-            if (selectedVehicle != null)
-            {
-                b.RentVehicle(vehicleId, customerId.Value);
-
-                vehicleCustomerDictionary[selectedVehicle] = b.GetPerson(customerId.Value);
+                else
+                {
+                    ShowErrorMessage("Booking failed");
+                }
             }
             else
             {
-                ShowErrorMessage("Selected vehicle not found.");
+                ShowErrorMessage("Selected customer not found");
             }
         }
-        else
+    }
+
+    private void ReturnVehicle(int vehicleId, int? distance)
+    {
+        if (vehicleId != 0)
         {
-            ShowErrorMessage("Please select a valid customer.");
+            if(distance.HasValue)
+            {
+                b.ReturnVehicle(vehicleId, distance.Value);
+                Distance = null;
+            }
+            else
+            {
+                ShowErrorMessage("Please enter a valid distance before returning the vehicle.");
+            }
         }
-    }*/
+    }
 
     private void AddVehicleToData()
     {

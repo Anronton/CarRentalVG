@@ -1,5 +1,6 @@
 ﻿using CarRental.Common.Classes;
 using CarRental.Common.Enums;
+using CarRental.Common.Extensions;
 using CarRental.Common.Interfaces;
 using System.Linq.Expressions;
 
@@ -24,6 +25,25 @@ public class BookingProcessor
         _data.Add(item);
     }
 
+    public IEnumerable<IBooking> GetBookings(Expression<Func<IBooking, bool>>? expression = null)
+    {
+        return GetItems(expression);
+    }
+
+
+    //public IBooking? GetBooking(int bookingId)
+    //{
+    //    var bookings = _data.Get<IBooking>(b => b.Id == bookingId);
+    //    return bookings.FirstOrDefault();
+    //}
+    public void Voidar() { }
+    //Ovan har vi kommenterat ut och gör en snabb band-aid lösning av den under:
+    private IBooking? GetBookingByVehicleId(int vehicleId)
+    {
+        return _data.Get<IBooking>(b => b.Vehicle.Id == vehicleId && b.VehicleBookingStatus == VehicleBookingStatuses.Open).FirstOrDefault();
+    }
+    //
+
     public IEnumerable<IPerson> GetPersons(Expression<Func<IPerson, bool>>? expression = null)
     {
         return GetItems(expression);
@@ -38,7 +58,6 @@ public class BookingProcessor
         return GetItems(expression);
     } 
 
-
     public IVehicle? GetVehicle(int vehicleId)
     {
         var vehicles = _data.Get<IVehicle>(v => v.Id == vehicleId);
@@ -50,17 +69,6 @@ public class BookingProcessor
         var vehicles = _data.Get<IVehicle>(v => v.RegNo == regNo);
         return vehicles.FirstOrDefault();
     }
-    public IEnumerable<IBooking> GetBookings(Expression<Func<IBooking, bool>>? expression = null)
-    {
-        return GetItems(expression);
-    }
-
-    public IBooking? GetBooking(int bookingId)
-    {
-        var bookings = _data.Get<IBooking>(b => b.Id == bookingId);
-        return bookings.FirstOrDefault();
-    }
-
 
     //Denna ska vi jobba med näst! Testar med att göra den icke async för att testa så att all logik fungerar.
     //public async Task<IBooking> RentVehicle(int vehicleId int customerId)
@@ -68,50 +76,61 @@ public class BookingProcessor
     //  await Task.Delay(10000) // fakeväntar 10sekunder
     //}
 
-    
-    //public void RentVehicle(int vehicleId, int customerId)
-    //{
-    //    var vehicle = GetVehicle(vehicleId);
-    //    var customer = GetPerson(customerId);
+    public IBooking? RentVehicle(int vehicleId, int customerId)
+    {
+        var vehicle = GetVehicle(vehicleId);
+        var customer = GetPerson(customerId);
 
-    //    if (vehicle != null && customer != null)
-    //    {
-    //        var initialOdometer = (int)vehicle.Odometer;
+        if (vehicle != null && customer != null)
+        {
+            var initialOdometer = vehicle.Odometer;
 
-    //        var booking = new Booking(vehicle, customer, initialOdometer, DateTime.Now, VehicleBookingStatuses.Open);
-    //        vehicle.VehicleStatus = VehicleStatuses.Booked;
+            var booking = new Booking(vehicle, customer, initialOdometer, DateTime.Now, VehicleBookingStatuses.Open);
+            vehicle.VehicleStatus = VehicleStatuses.Booked;
 
-    //        AddItem(booking);
-    //    }
+            AddItem(booking);
+            return booking;
+        }
+        return null;
+    }
 
-    //}
 
+    public void ReturnVehicle(int vehicleId, int distance)
+    {
+        var booking = GetBookingByVehicleId(vehicleId);
 
-    //public void ReturnVehicle(int vehicleId, int distance)
-    //{
+        if (booking == null)
+        {
+            throw new Exception("Booking not found");
+        }
 
-    //    var booking = _data.Get<IBooking>(b => b.Id == vehicleId && b.VehicleBookingStatus == VehicleBookingStatuses.Open).FirstOrDefault();
+        var vehicle = GetVehicle(vehicleId);
 
-    //    if (booking == null)
-    //    {
-    //        throw new Exception("Booking not found");
-    //    }
-
-    //    var vehicle = GetVehicle(vehicleId);
-    //    if(vehicle is null)
-    //    {
-    //        throw new Exception("Vehicle not found");
-    //    }
-
-    //    booking.VehicleBookingStatus = VehicleBookingStatuses.Closed;
-    //    vehicle.VehicleStatus = VehicleStatuses.Available;
-
-    //    vehicle.Odometer += distance;
-
-    //    AddItem(booking);
-    //    AddItem(vehicle);
+        if (vehicle == null)
+        {
+            throw new Exception("Vehicle not found");
+        }
         
-    //}
+        if(booking.VehicleBookingStatus == VehicleBookingStatuses.Open)
+        {
+            booking.VehicleBookingStatus = VehicleBookingStatuses.Closed;
+            vehicle.VehicleStatus = VehicleStatuses.Available;
+            vehicle.Odometer += distance;
+            booking.ReturnDate = DateTime.Now;
+            booking.Distance = distance;
+
+            double dayCost = vehicle.DayCost();
+            booking.CalculateTotalCost(dayCost, vehicle.CostKm);
+        }
+        else
+        {
+            throw new Exception("Booking is not open and cannot be returned.");
+        }
+
+    }
+
+
+
 
     public void AddVehicle(string regNo, string make, int odometer, double costKm, VehicleTypes vehicleType)
     {
@@ -154,12 +173,10 @@ public class BookingProcessor
     public string[] VehicleStatusNames => _data.VehicleStatusNames;
     public string[] VehicleTypeNames => _data.VehicleTypeNames;
     public VehicleTypes GetVehicleType(string name) => _data.GetVehicleType(name);
-
     public string[] GetVehicleTypeNames()
     {
         return _data.VehicleTypeNames;
     }
-
     public VehicleTypes[] GetVehicleTypes()
     {
         return Enum.GetValues(typeof(VehicleTypes)).Cast<VehicleTypes>().ToArray();
