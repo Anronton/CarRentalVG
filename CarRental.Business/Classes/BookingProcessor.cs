@@ -30,21 +30,11 @@ public class BookingProcessor
         return GetItems(expression);
     }
 
-
-    //public IBooking? GetBooking(int bookingId)
-    //{
-    //    var bookings = _data.Get<IBooking>(b => b.Id == bookingId);
-    //    return bookings.FirstOrDefault();
-    //}
-    
-
-    //Ovan har vi kommenterat ut och gör en snabb band-aid lösning av den under:
     private IBooking? GetBookingByVehicleId(int vehicleId)
     {
         return _data.Get<IBooking>(b => b.Vehicle.Id == vehicleId && b.VehicleBookingStatus == VehicleBookingStatuses.Open).FirstOrDefault();
     }
-    //
-
+    
     public IEnumerable<IPerson> GetPersons(Expression<Func<IPerson, bool>>? expression = null)
     {
         return GetItems(expression);
@@ -54,6 +44,7 @@ public class BookingProcessor
     {
         return _data.Get<IPerson>(p => p.Id == customerId).SingleOrDefault();
     }
+
     public IEnumerable<IVehicle> GetVehicles(Expression<Func<IVehicle, bool>>? expression = null)
     {
         return GetItems(expression);
@@ -65,36 +56,33 @@ public class BookingProcessor
         return vehicles.FirstOrDefault();
     }
 
-    public IVehicle? GetVehicle(string regNo)
+    public async Task<IBooking?> RentVehicle(int vehicleId, int customerId)
     {
-        var vehicles = _data.Get<IVehicle>(v => v.RegNo == regNo);
-        return vehicles.FirstOrDefault();
-    }
-
-    //Denna ska vi jobba med näst! Testar med att göra den icke async för att testa så att all logik fungerar.
-    //public async Task<IBooking> RentVehicle(int vehicleId int customerId)
-    //{
-    //  await Task.Delay(10000) // fakeväntar 10sekunder
-    //}
-
-    public IBooking? RentVehicle(int vehicleId, int customerId)
-    {
-        var vehicle = GetVehicle(vehicleId);
-        var customer = GetPerson(customerId);
-
-        if (vehicle != null && customer != null)
+        try
         {
-            var initialOdometer = vehicle.Odometer;
+            var vehicle = await Task.Run(() => GetVehicle(vehicleId));
+            var customer = await Task.Run(() => GetPerson(customerId));
 
-            var booking = new Booking(vehicle, customer, initialOdometer, DateTime.Now, VehicleBookingStatuses.Open);
-            vehicle.VehicleStatus = VehicleStatuses.Booked;
+            if (vehicle != null && customer != null)
+            {
+                var initialOdometer = vehicle.Odometer;
 
-            AddItem(booking);
-            return booking;
+                var booking = new Booking(vehicle, customer, initialOdometer, DateTime.Now, VehicleBookingStatuses.Open);
+                vehicle.VehicleStatus = VehicleStatuses.Booked;
+
+                await Task.Delay(5000);
+
+                AddItem(booking);
+                return booking;
+            }
+
+            return null;
         }
-        return null;
+        catch (Exception ex)
+        {
+             throw new Exception("Rental failed", ex);
+        }
     }
-
 
     public void ReturnVehicle(int vehicleId, int distance)
     {
@@ -118,9 +106,6 @@ public class BookingProcessor
         }
 
     }
-
-
-
 
     public void AddVehicle(string regNo, string make, int odometer, double costKm, VehicleTypes vehicleType)
     {
@@ -164,7 +149,7 @@ public class BookingProcessor
 
     public string[] VehicleBookingStatusNames => _data.VehicleBookingStatusNames;
     public string[] VehicleStatusNames => _data.VehicleStatusNames;
-    //public string[] VehicleTypeNames => _data.VehicleTypeNames;
+    public string[] VehicleTypeNames => _data.VehicleTypeNames; // vill använda dessa 3
     public VehicleTypes GetVehicleType(string name) => _data.GetVehicleType(name);
     
     public VehicleTypes[] GetVehicleTypes()
