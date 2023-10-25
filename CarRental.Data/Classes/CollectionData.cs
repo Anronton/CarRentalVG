@@ -27,11 +27,11 @@ public class CollectionData : IData
         _persons.Add(new Customer(3, "721111", "Jane", "Smith"));
 
         //Vehicles
-        _vehicles.Add(new Car(1, "SIX666", "Volvo", 1000, 2.5, VehicleTypes.Combi, VehicleStatuses.Available));
-        _vehicles.Add(new Motorcycle(2, "ABC123", "Yamaha", 3000, 1, VehicleTypes.Motorcycle, VehicleStatuses.Available));
-        _vehicles.Add(new Car(3, "BKJ142", "Ford", 2500, 2, VehicleTypes.Van, VehicleStatuses.Available));
-        _vehicles.Add(new Car(4, "BLZ420", "BMW", 5000, 5, VehicleTypes.Sedan, VehicleStatuses.Available));
-        _vehicles.Add(new Car(5, "ORT141", "Saab", 10000, 1.5, VehicleTypes.Combi, VehicleStatuses.Available));
+        _vehicles.Add(new Vehicle(1, "SIX666", "Volvo", 1000, 2.5, VehicleTypes.Combi, VehicleStatuses.Available));
+        _vehicles.Add(new Vehicle(2, "ABC123", "Yamaha", 3000, 1, VehicleTypes.Motorcycle, VehicleStatuses.Available));
+        _vehicles.Add(new Vehicle(3, "BKJ142", "Ford", 2500, 2, VehicleTypes.Van, VehicleStatuses.Available));
+        _vehicles.Add(new Vehicle(4, "BLZ420", "BMW", 5000, 5, VehicleTypes.Sedan, VehicleStatuses.Available));
+        _vehicles.Add(new Vehicle(5, "ORT141", "Saab", 10000, 1.5, VehicleTypes.Combi, VehicleStatuses.Available));
 
         //bookings
 

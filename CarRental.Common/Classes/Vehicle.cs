@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace CarRental.Common.Classes;
 
-public abstract class Vehicle : IVehicle
+public class Vehicle : IVehicle
 {
     public int Id { get; set; }
     public string RegNo { get; init; }

@@ -114,19 +114,19 @@ public class BookingProcessor
 
         if (vehicleType == VehicleTypes.Sedan)
         {
-            vehicle = new Car(default, regNo, make, odometer, costKm, VehicleTypes.Sedan, VehicleStatuses.Available);
+            vehicle = new Vehicle(default, regNo, make, odometer, costKm, VehicleTypes.Sedan, VehicleStatuses.Available);
         }
         else if (vehicleType == VehicleTypes.Combi)
         {
-            vehicle = new Car(default, regNo, make, odometer, costKm, VehicleTypes.Combi, VehicleStatuses.Available);
+            vehicle = new Vehicle(default, regNo, make, odometer, costKm, VehicleTypes.Combi, VehicleStatuses.Available);
         }
         else if (vehicleType == VehicleTypes.Van)
         {
-            vehicle = new Car(default, regNo, make, odometer, costKm, VehicleTypes.Van, VehicleStatuses.Available);
+            vehicle = new Vehicle(default, regNo, make, odometer, costKm, VehicleTypes.Van, VehicleStatuses.Available);
         }
         else if (vehicleType == VehicleTypes.Motorcycle)
         {
-            vehicle = new Motorcycle(default, regNo, make, odometer, costKm, VehicleTypes.Motorcycle, VehicleStatuses.Available);
+            vehicle = new Vehicle(default, regNo, make, odometer, costKm, VehicleTypes.Motorcycle, VehicleStatuses.Available);
         }
         else
         {
