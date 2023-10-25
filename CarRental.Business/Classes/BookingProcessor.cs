@@ -15,6 +15,10 @@ public class BookingProcessor
         _data = data;
     }
 
+    Vehicle v = new();
+    Customer c = new();
+    Booking b = new();
+
     public IEnumerable<T> GetItems<T>(Expression<Func<T, bool>>? expression = null) //where T : class
     {
         return _data.Get(expression);

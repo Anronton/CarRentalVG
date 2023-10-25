@@ -28,4 +28,8 @@ public class Vehicle : IVehicle
         VehicleType = vehicleType;
         VehicleStatus = vehicleStatus;
     }
+    public Vehicle()
+    {
+        
+    }
 }

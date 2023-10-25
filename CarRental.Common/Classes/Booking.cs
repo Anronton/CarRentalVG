@@ -24,4 +24,8 @@ public class Booking : IBooking
         BookingDate = bookingDate;
         VehicleBookingStatus = vehicleBookingStatus;
     }
+    public Booking()
+    {
+        
+    }
 }
