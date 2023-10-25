@@ -3,6 +3,7 @@ using CarRental.Common.Enums;
 using CarRental.Common.Interfaces;
 using CarRental.Common.Extensions;
 using System.Linq.Expressions;
+using System.Reflection;
 
 namespace CarRental.Data.Classes;
 
@@ -127,7 +128,7 @@ public class CollectionData : IData
         }
     }
 
-    public List<T> Get<T>(Expression<Func<T, bool>>? expression) // tänk över Expression, jonas använder inte den, det har med laddningstid/kompilering att göra, mest praktiskt med väldigt mycket kod, reflektera över det!
+    /*public List<T> Get<T>(Expression<Func<T, bool>>? expression) // tänk över Expression, jonas använder inte den, det har med laddningstid/kompilering att göra, mest praktiskt med väldigt mycket kod, reflektera över det!
     {
         if (typeof(T) == typeof(IPerson))
         {
@@ -154,9 +155,9 @@ public class CollectionData : IData
             return _bookings.OfType<T>().ToList();
         }
         return new List<T>();
-    }
+    }*/
 
-    public T? Single<T>(Expression<Func<T, bool>>? expression) // tänk över Expression, jonas använder inte den.
+    /*public T? Single<T>(Expression<Func<T, bool>>? expression) // tänk över Expression, jonas använder inte den.
     {
         if (typeof(T) == typeof(IPerson))
         {
@@ -176,15 +177,15 @@ public class CollectionData : IData
         }
         else if (typeof(T) == typeof(IBooking))
         {
-            if(expression != null)
+            if (expression != null)
             {
                 return _bookings.OfType<T>().SingleOrDefault(expression.Compile());
             }
             return default;
         }
         return default;
-    }
-        
+    }*/
+
     public IEnumerable<IVehicle> GetVehicles(VehicleStatuses status = default)
     {
         if(status != default)
@@ -205,5 +206,38 @@ public class CollectionData : IData
         }
         throw new ArgumentException("Invalid Vehicle Type");
     }
-        
+
+    public List<T> Get<T>(Expression<Func<T, bool>>? expression)
+    {
+        FieldInfo? info = GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic).FirstOrDefault(f => f.FieldType == typeof(List<T>));
+        if (info != null)
+        {
+            var list = (List<T>)info.GetValue(this);
+            if(expression != null)
+            {
+                list = list.Where(expression.Compile()).ToList();
+            }
+            return list;
+        }
+        else
+        {
+            throw new InvalidOperationException("No private List<T> field found in the current instance.");
+        }
+    }
+
+    public T? Single<T>(Expression<Func<T, bool>>? expression)
+    {
+        FieldInfo? info = GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic).FirstOrDefault(f => f.FieldType == typeof(List<T>));
+        if(info != null)
+        {
+            var list = (List<T>)info.GetValue(this);
+            var item = list.SingleOrDefault(expression.Compile());
+
+            return item;
+        }
+        else 
+        { 
+            throw new InvalidOperationException("No private List<T> field found in the current instance."); 
+        }
+    }
 }
