@@ -157,9 +157,9 @@
         </thead>
         <tbody>
             <tr>
-                <td><input @bind="SocialSecurityNumber" class="form-control" placeholder="SSN" /></td>
-                <td><input @bind="lastName" class="form-control" placeholder="Last Name" /></td>
-                <td><input @bind="firstName" class="form-control" placeholder="First Name" /></td>
+                <td><input @bind="b.Customer.SocialSecurityNumber" class="form-control" placeholder="SSN" /></td>
+                <td><input @bind="b.Customer.LastName" class="form-control" placeholder="Last Name" /></td>
+                <td><input @bind="b.Customer.FirstName" class="form-control" placeholder="First Name" /></td>
                 <td><button @onclick="AddCustomerToData" class="btn btn-sm btn-outline-success">Add</button></td>
             </tr>
             @foreach(var person in b.GetPersons())
@@ -186,9 +186,6 @@
     private double? Odometer;
     private double? CostKm;
     private string? SelectedVehicleType;
-    private string? SocialSecurityNumber;
-    private string? lastName;
-    private string? firstName;
 
     private void ShowErrorMessage(string message)
     {
@@ -278,12 +275,12 @@
 
     private void AddCustomerToData()
     {
-        if (SocialSecurityNumber != null && lastName != null && firstName != null)
+        if (b.Customer.SocialSecurityNumber != null && b.Customer.LastName != null && b.Customer.FirstName != null)
         {
-            b.AddCustomer(SocialSecurityNumber, lastName, firstName);
-            SocialSecurityNumber = "";
-            lastName = "";
-            firstName = "";
+            b.AddCustomer(b.Customer.SocialSecurityNumber, b.Customer.LastName, b.Customer.FirstName);
+            b.Customer.SocialSecurityNumber = "";
+            b.Customer.LastName = "";
+            b.Customer.FirstName = "";
         }
     }
 }

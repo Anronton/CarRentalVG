@@ -18,6 +18,8 @@ public class BookingProcessor
     Vehicle v = new();
     Customer c = new();
     Booking b = new();
+    public Customer Customer => c;
+
 
     public IEnumerable<T> GetItems<T>(Expression<Func<T, bool>>? expression = null) //where T : class
     {
