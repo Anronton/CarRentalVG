@@ -5,10 +5,10 @@ namespace CarRental.Common.Interfaces;
 public interface IVehicle : IId
 {
     
-    public string RegNo { get; init; }
-    public string Make { get; init; }
-    public int Odometer { get; set; }
-    public double CostKm { get; init; }
-    public VehicleTypes VehicleType { get; init; }
+    public string RegNo { get; set; }
+    public string Make { get; set; }
+    public int? Odometer { get; set; }
+    public double? CostKm { get; set; }
+    public VehicleTypes VehicleType { get; set; }
     public VehicleStatuses VehicleStatus { get; set; }
 }

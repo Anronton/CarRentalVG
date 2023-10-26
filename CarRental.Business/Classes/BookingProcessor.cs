@@ -15,10 +15,13 @@ public class BookingProcessor
         _data = data;
     }
 
-    //Vehicle v = new();
+    Vehicle v = new();
     Customer c = new();
     //Booking b = new();
+
+    public Vehicle Vehicle => v;
     public Customer Customer => c;
+    
 
 
     public IEnumerable<T> GetItems<T>(Expression<Func<T, bool>>? expression = null) //where T : class
@@ -73,7 +76,7 @@ public class BookingProcessor
             {
                 var initialOdometer = vehicle.Odometer;
 
-                var booking = new Booking(vehicle, customer, initialOdometer, DateTime.Now, VehicleBookingStatuses.Open);
+                var booking = new Booking(vehicle, customer, (int)initialOdometer, DateTime.Now, VehicleBookingStatuses.Open);
                 vehicle.VehicleStatus = VehicleStatuses.Booked;
 
                 await Task.Delay(5000);
@@ -113,7 +116,27 @@ public class BookingProcessor
 
     }
 
-    public void AddVehicle(string regNo, string make, int odometer, double costKm, VehicleTypes vehicleType)
+    public void AddVehicle()
+    {
+        if (!string.IsNullOrWhiteSpace(this.Vehicle.RegNo) && !string.IsNullOrWhiteSpace(this.Vehicle.Make) && this.Vehicle.Odometer.HasValue && this.Vehicle.CostKm.HasValue && !string.IsNullOrEmpty(this.Vehicle.VehicleType.ToString()))
+        {
+            var vehicleTypeEnum = GetVehicleType(this.Vehicle.VehicleType.ToString());
+            int nextVehicleId = _data.NextVehicleId;
+            IVehicle vehicle = new Vehicle(default, this.Vehicle.RegNo, this.Vehicle.Make, (int)this.Vehicle.Odometer.Value, this.Vehicle.CostKm.Value, vehicleTypeEnum, VehicleStatuses.Available)
+            {
+                Id = nextVehicleId,
+            };
+            AddItem(vehicle);
+
+            this.Vehicle.RegNo = "";
+            this.Vehicle.Make = "";
+            this.Vehicle.Odometer = null;
+            this.Vehicle.CostKm = null;
+            this.Vehicle.VehicleType = default;
+        }
+    }
+
+    /*public void AddVehicle(string regNo, string make, int odometer, double costKm, VehicleTypes vehicleType)
     {
         int nextVehicleId = _data.NextVehicleId;
         IVehicle? vehicle;
@@ -136,13 +159,13 @@ public class BookingProcessor
         }
         else
         {
-            throw new Exception();
+            throw new Exception("Not a valid vehicle type");
         }
-        
+
         vehicle.Id = nextVehicleId;
         AddItem(vehicle);
-        
-    }
+
+    }*/
 
     public void AddCustomer()
     {

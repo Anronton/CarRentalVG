@@ -11,7 +11,7 @@ namespace CarRental.Common.Extensions;
 
 public static class BookingExtensions
 {
-    public static void CalculateTotalCost(this IBooking booking, double dayCost, double costKm)
+    public static void CalculateTotalCost(this IBooking booking, double? dayCost, double? costKm)
     {
         if (booking.ReturnDate.HasValue)
         { 
@@ -23,7 +23,7 @@ public static class BookingExtensions
 
             int distance = booking.Distance ?? 0;
 
-            double firstDayCost = Math.Max(1, dayCost);
+            double firstDayCost = Math.Max(1, (double)dayCost);
 
             booking.TotalCost = (firstDayCost + (days - 1) * dayCost) + distance * costKm;
         }

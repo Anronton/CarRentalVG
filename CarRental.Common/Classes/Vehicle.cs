@@ -11,14 +11,14 @@ namespace CarRental.Common.Classes;
 public class Vehicle : IVehicle
 {
     public int Id { get; set; }
-    public string RegNo { get; init; }
-    public string Make { get; init; }
-    public int Odometer { get; set; }
-    public double CostKm { get; init; }
-    public VehicleTypes VehicleType { get; init; }
+    public string RegNo { get; set; }
+    public string Make { get; set; }
+    public int? Odometer { get; set; }
+    public double? CostKm { get; set; }
+    public VehicleTypes VehicleType { get; set; }
     public VehicleStatuses VehicleStatus { get; set; }
 
-    public Vehicle(int id, string regNo, string make, int odometer, double costKm, VehicleTypes vehicleType, VehicleStatuses vehicleStatus)
+    public Vehicle(int id, string regNo, string make, int? odometer, double? costKm, VehicleTypes vehicleType, VehicleStatuses vehicleStatus)
     {  
         Id = id;
         RegNo = regNo;

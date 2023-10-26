@@ -30,12 +30,13 @@
         </thead>
         <tbody>
             <tr>
-                <td><input class="form-control" placeholder="RegNo" @bind="RegNo" disabled="@isTaskDelayInProgress" /></td>
-                <td><input class="form-control" placeholder="Make" @bind="Make" disabled="@isTaskDelayInProgress" /></td>
-                <td><input class="form-control" placeholder="0" @bind="Odometer" disabled="@isTaskDelayInProgress" /></td>
-                <td><input class="form-control" placeholder="0" @bind="CostKm" disabled="@isTaskDelayInProgress" /></td>
+                <td><input class="form-control" placeholder="RegNo" @bind="b.Vehicle.RegNo" disabled="@isTaskDelayInProgress" /></td> <!--Här!-->
+                <td><input class="form-control" placeholder="Make" @bind="b.Vehicle.Make" disabled="@isTaskDelayInProgress" /></td>
+                <td><input class="form-control" placeholder="0" @bind="b.Vehicle.Odometer" disabled="@isTaskDelayInProgress" /></td>
+                <td><input class="form-control" placeholder="0" @bind="b.Vehicle.CostKm" disabled="@isTaskDelayInProgress" /></td>
                 <td>
-                    <select class="form-control" @bind="SelectedVehicleType" disabled="@isTaskDelayInProgress">
+                    @* <select class="form-control" @bind="SelectedVehicleType" disabled="@isTaskDelayInProgress"> *@
+                    <select class="form-control" @bind="b.Vehicle.VehicleType" disabled="@isTaskDelayInProgress">
                         <option value="">-- Select Type --</option>
                         @foreach (var typeName in b.GetVehicleTypes())
                         {
@@ -44,7 +45,8 @@
                     </select>
                 </td>
                 <td></td>
-                <td><button @onclick="AddVehicleToData" class="btn btn-sm btn-outline-success" disabled="@isTaskDelayInProgress">Add</button></td>
+                @* <td><button @onclick="AddVehicleToData" class="btn btn-sm btn-outline-success" disabled="@isTaskDelayInProgress">Add</button></td> *@
+                <td><button @onclick="b.AddVehicle" class="btn btn-sm btn-outline-success" disabled="@isTaskDelayInProgress">Add</button></td>
                 <td></td>
                 <td>@if (isTaskDelayInProgress){<label class="btn-sm btn-warning text-light">Processing</label>}</td>
             </tr>
@@ -254,30 +256,20 @@
     }
 
 
-
-
-
-
-    private void AddVehicleToData()
+    /*private void AddVehicleToData()
     {
-        if(!string.IsNullOrWhiteSpace(RegNo) && !string.IsNullOrWhiteSpace(Make) && Odometer.HasValue && CostKm.HasValue && !string.IsNullOrEmpty(SelectedVehicleType))
+        if (!string.IsNullOrWhiteSpace(b.Vehicle.RegNo) && !string.IsNullOrWhiteSpace(b.Vehicle.Make) && b.Vehicle.Odometer.HasValue && b.Vehicle.CostKm.HasValue && !string.IsNullOrEmpty(b.Vehicle.VehicleType.ToString()))
         {
-            var vehicleTypeEnum = b.GetVehicleType(SelectedVehicleType);
-            b.AddVehicle(RegNo, Make, (int)Odometer.Value, CostKm.Value, vehicleTypeEnum);
+            var vehicleTypeEnum = b.GetVehicleType(b.Vehicle.VehicleType.ToString());
+            b.AddVehicle(b.Vehicle.RegNo, b.Vehicle.Make, (int)b.Vehicle.Odometer.Value, b.Vehicle.CostKm.Value, vehicleTypeEnum);
 
-            RegNo = "";
-            Make = "";
-            Odometer = null;
-            CostKm = null;
-            SelectedVehicleType = null;
+            b.Vehicle.RegNo = "";
+            b.Vehicle.Make = "";
+            b.Vehicle.Odometer = null;
+            b.Vehicle.CostKm = null;
+            b.Vehicle.VehicleType = default;
         }
 
-    }
-    
-    private string? RegNo;
-    private string? Make;
-    private double? Odometer;
-    private double? CostKm;
-    private string? SelectedVehicleType;
+    }*/
 
 }

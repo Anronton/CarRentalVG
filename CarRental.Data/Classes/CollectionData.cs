@@ -56,7 +56,7 @@ public class CollectionData : IData
         {
             if(vehicle.VehicleStatus == VehicleStatuses.Available)
             {
-                int initialOdometer = vehicle.Odometer;
+                int initialOdometer = (int)vehicle.Odometer;
 
                 IBooking booking = new Booking(vehicle, customer, initialOdometer, DateTime.Now, VehicleBookingStatuses.Open);
 
