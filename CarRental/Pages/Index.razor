@@ -160,7 +160,7 @@
                 <td><input @bind="b.Customer.SocialSecurityNumber" class="form-control" placeholder="SSN" /></td>
                 <td><input @bind="b.Customer.LastName" class="form-control" placeholder="Last Name" /></td>
                 <td><input @bind="b.Customer.FirstName" class="form-control" placeholder="First Name" /></td>
-                <td><button @onclick="AddCustomerToData" class="btn btn-sm btn-outline-success">Add</button></td>
+                <td><button @onclick="b.AddCustomer" class="btn btn-sm btn-outline-success">Add</button></td>
             </tr>
             @foreach(var person in b.GetPersons())
             {
@@ -181,12 +181,8 @@
     private int selectedCustomerId = 0;
     private string? errorMessage = null;
     private int? Distance;
-    private string? RegNo;
-    private string? Make;
-    private double? Odometer;
-    private double? CostKm;
-    private string? SelectedVehicleType;
-
+    
+   
     private void ShowErrorMessage(string message)
     {
         errorMessage = message;
@@ -257,6 +253,11 @@
         }
     }
 
+
+
+
+
+
     private void AddVehicleToData()
     {
         if(!string.IsNullOrWhiteSpace(RegNo) && !string.IsNullOrWhiteSpace(Make) && Odometer.HasValue && CostKm.HasValue && !string.IsNullOrEmpty(SelectedVehicleType))
@@ -272,15 +273,11 @@
         }
 
     }
+    
+    private string? RegNo;
+    private string? Make;
+    private double? Odometer;
+    private double? CostKm;
+    private string? SelectedVehicleType;
 
-    private void AddCustomerToData()
-    {
-        if (b.Customer.SocialSecurityNumber != null && b.Customer.LastName != null && b.Customer.FirstName != null)
-        {
-            b.AddCustomer(b.Customer.SocialSecurityNumber, b.Customer.LastName, b.Customer.FirstName);
-            b.Customer.SocialSecurityNumber = "";
-            b.Customer.LastName = "";
-            b.Customer.FirstName = "";
-        }
-    }
 }

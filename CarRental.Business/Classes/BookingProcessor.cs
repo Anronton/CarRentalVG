@@ -15,9 +15,9 @@ public class BookingProcessor
         _data = data;
     }
 
-    Vehicle v = new();
+    //Vehicle v = new();
     Customer c = new();
-    Booking b = new();
+    //Booking b = new();
     public Customer Customer => c;
 
 
@@ -143,19 +143,29 @@ public class BookingProcessor
         AddItem(vehicle);
         
     }
-    public void AddCustomer(string sociaSecurityNumber, string firstName, string lastName)
+
+    public void AddCustomer()
     {
-        int nextPersonId = _data.NextPersonId;
-        IPerson? customer = new Customer(default, sociaSecurityNumber, lastName, firstName)
+        if (this.Customer.SocialSecurityNumber != null && this.Customer.FirstName != null && this.Customer.LastName != null)
         {
-            Id = nextPersonId
-        };
-        AddItem(customer);
+
+            int nextPersonId = _data.NextPersonId;
+            IPerson? customer = new Customer(default, this.Customer.SocialSecurityNumber, this.Customer.FirstName, this.Customer.LastName)
+            {
+                Id = nextPersonId
+            };
+            AddItem(customer);
+
+            this.Customer.SocialSecurityNumber = "";
+            this.Customer.FirstName = "";
+            this.Customer.LastName = "";
+         
+        }
     }
 
     public string[] VehicleBookingStatusNames => _data.VehicleBookingStatusNames;
     public string[] VehicleStatusNames => _data.VehicleStatusNames;
-    public string[] VehicleTypeNames => _data.VehicleTypeNames; // vill använda dessa 3
+    public string[] VehicleTypeNames => _data.VehicleTypeNames; 
     public VehicleTypes GetVehicleType(string name) => _data.GetVehicleType(name);
     
     public VehicleTypes[] GetVehicleTypes()
