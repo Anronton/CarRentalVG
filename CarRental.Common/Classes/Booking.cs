@@ -26,6 +26,6 @@ public class Booking : IBooking
     }
     public Booking()
     {
-        
+        Id = 0;
     }
 }

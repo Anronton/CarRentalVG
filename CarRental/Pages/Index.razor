@@ -1,16 +1,16 @@
 ﻿@page "/"
 @using CarRental.Common.Extensions
 @using CarRental.Business.Classes 
-@inject BookingProcessor b
+@inject BookingProcessor bp
 
 
 <PageTitle>Car Rental</PageTitle>
 
 <h1 class="display-4">Car Rental</h1>
 
-@* <div class="alert alert-danger" role="alert" style="display: @(string.IsNullOrEmpty(errorMessage) ? "none" : "block")">
+<div class="alert alert-danger" role="alert" style="display: @(string.IsNullOrEmpty(errorMessage) ? "none" : "block")">
     @errorMessage
-</div> *@
+</div>
 
 <div>
     <div class="heading-font display-6">Vehicles</div>
@@ -30,27 +30,24 @@
         </thead>
         <tbody>
             <tr>
-                <td><input class="form-control" placeholder="RegNo" @bind="b.Vehicle.RegNo" disabled="@isTaskDelayInProgress" /></td> <!--Här!-->
-                <td><input class="form-control" placeholder="Make" @bind="b.Vehicle.Make" disabled="@isTaskDelayInProgress" /></td>
-                <td><input class="form-control" placeholder="0" @bind="b.Vehicle.Odometer" disabled="@isTaskDelayInProgress" /></td>
-                <td><input class="form-control" placeholder="0" @bind="b.Vehicle.CostKm" disabled="@isTaskDelayInProgress" /></td>
+                <td><input class="form-control" placeholder="RegNo" @bind="bp.Vehicle.RegNo" disabled="@isTaskDelayInProgress" /></td> <!--Här!-->
+                <td><input class="form-control" placeholder="Make" @bind="bp.Vehicle.Make" disabled="@isTaskDelayInProgress" /></td>
+                <td><input class="form-control" placeholder="0" @bind="bp.Vehicle.Odometer" disabled="@isTaskDelayInProgress" /></td>
+                <td><input class="form-control" placeholder="0" @bind="bp.Vehicle.CostKm" disabled="@isTaskDelayInProgress" /></td>
                 <td>
-                    @* <select class="form-control" @bind="SelectedVehicleType" disabled="@isTaskDelayInProgress"> *@
-                    <select class="form-control" @bind="b.Vehicle.VehicleType" disabled="@isTaskDelayInProgress">
-                        <option value="">-- Select Type --</option>
-                        @foreach (var typeName in b.GetVehicleTypes())
+                    <select class="form-select" @bind="bp.Vehicle.VehicleType" disabled="@isTaskDelayInProgress">
+                        @foreach (var typeName in bp.VehicleTypeNames)
                         {
-                            <option value="@typeName">@typeName</option>
+                            <option value="@bp.GetVehicleType(typeName)">@typeName</option>
                         }
                     </select>
                 </td>
                 <td></td>
-                @* <td><button @onclick="AddVehicleToData" class="btn btn-sm btn-outline-success" disabled="@isTaskDelayInProgress">Add</button></td> *@
-                <td><button @onclick="b.AddVehicle" class="btn btn-sm btn-outline-success" disabled="@isTaskDelayInProgress">Add</button></td>
+                <td><button @onclick="bp.AddVehicle" class="btn btn-sm btn-outline-success" disabled="@isTaskDelayInProgress">Add</button></td>
                 <td></td>
                 <td>@if (isTaskDelayInProgress){<label class="btn-sm btn-warning text-light">Processing</label>}</td>
             </tr>
-            @foreach (var vehicle in b.GetVehicles())
+            @foreach (var vehicle in bp.GetVehicles())
             {     
                 <tr>
                     <th scope="row" class="align-middle">@vehicle.RegNo</th>
@@ -63,9 +60,8 @@
                     <td>
                         @if (vehicle.VehicleStatus == Common.Enums.VehicleStatuses.Available)
                         {
-                            <select class="form-control" @bind="selectedCustomerId" disabled="@isTaskDelayInProgress">
-                                <option value="0" placeholder="Select Customer"></option>
-                                @foreach (var person in b.GetPersons())
+                             <select class="form-select" @bind="bp.Customer.Id" disabled="@isTaskDelayInProgress">                            
+                                @foreach (var person in bp.GetPersons())
                                 {
                                     <option value="@person.Id">@($"{person.FirstName} {person.LastName} ({person.SocialSecurityNumber})")</option>
                                 }
@@ -73,7 +69,7 @@
                         }
                         @if(vehicle.VehicleStatus == Common.Enums.VehicleStatuses.Booked)
                         {
-                            <input class="form-control" placeholder="Distance" @bind="Distance" disabled="@isTaskDelayInProgress" />
+                            <input class="form-control" placeholder="Distance" @bind="bp.Booking.Distance" disabled="@isTaskDelayInProgress" />
                         }
                     </td>
                     
@@ -84,7 +80,7 @@
                         }
                         @if (vehicle.VehicleStatus == Common.Enums.VehicleStatuses.Booked)
                         {
-                            <button @onclick="() => ReturnVehicle(vehicle.Id, Distance)" class="btn btn-sm btn-outline-success" disabled="@isTaskDelayInProgress">Return</button>
+                            <button @onclick="() => ReturnVehicle(vehicle.Id, bp.Booking.Distance)" class="btn btn-sm btn-outline-success" disabled="@isTaskDelayInProgress">Return</button>
                         }
                     </td> 
 
@@ -114,7 +110,7 @@
             </tr>
         </thead>
         <tbody>
-            @foreach (var booking in b.GetBookings())
+            @foreach (var booking in bp.GetBookings())
             {
                 <tr>
                     <th scope="row" class="align-middle">@booking.Vehicle.RegNo</th>
@@ -159,12 +155,12 @@
         </thead>
         <tbody>
             <tr>
-                <td><input @bind="b.Customer.SocialSecurityNumber" class="form-control" placeholder="SSN" /></td>
-                <td><input @bind="b.Customer.LastName" class="form-control" placeholder="Last Name" /></td>
-                <td><input @bind="b.Customer.FirstName" class="form-control" placeholder="First Name" /></td>
-                <td><button @onclick="b.AddCustomer" class="btn btn-sm btn-outline-success">Add</button></td>
+                <td><input @bind="bp.Customer.SocialSecurityNumber" class="form-control" placeholder="SSN" /></td>
+                <td><input @bind="bp.Customer.LastName" class="form-control" placeholder="Last Name" /></td>
+                <td><input @bind="bp.Customer.FirstName" class="form-control" placeholder="First Name" /></td>
+                <td><button @onclick="bp.AddCustomer" class="btn btn-sm btn-outline-success">Add</button></td>
             </tr>
-            @foreach(var person in b.GetPersons())
+            @foreach(var person in bp.GetPersons())
             {
                 <tr>
                     <th scope="row">@person.SocialSecurityNumber</th>
@@ -180,57 +176,93 @@
 @code{
     private bool isTaskDelayInProgress = false;
 
-    private int selectedCustomerId = 0;
     private string? errorMessage = null;
-    private int? Distance;
     
-   
     private void ShowErrorMessage(string message)
     {
         errorMessage = message;
     }
 
-    private async Task RentVehicleAsync(int vehicleId)
+    /*private async Task RentVehicleAsync(int vehicleId)
     {
-        if (vehicleId != 0 && selectedCustomerId != 0)
+    if (vehicleId != 0 && selectedCustomerId != 0)
+    {
+    var selectedCustomer = bp.GetPerson(selectedCustomerId);
+
+    if (selectedCustomer != null)
         {
-            var selectedCustomer = b.GetPerson(selectedCustomerId);
+        try
+        {
+            isTaskDelayInProgress = true;
+            StateHasChanged();
 
-            if (selectedCustomer != null)
+            var booking = await bp.RentVehicle(vehicleId, selectedCustomer.Id);
+
+            if (booking != null)
             {
-                try
-                {
-                    isTaskDelayInProgress = true;
-                    StateHasChanged();
-
-                    var booking = await b.RentVehicle(vehicleId, selectedCustomer.Id);
-
-                    if (booking != null)
-                    {
-                        selectedCustomerId = 0;
-                    }
-                    else
-                    {
-                        ShowErrorMessage("Booking failed");
-                    }
-                }
-                catch (Exception ex)
-                {
-                    ShowErrorMessage($"Error while renting vehicle: {ex.Message}");
-                }
-                finally
-                {
-                    await Task.Delay(5000);
-                    isTaskDelayInProgress = false;
-                    StateHasChanged();
-                }
+            selectedCustomerId = 0;
             }
             else
             {
-                ShowErrorMessage("Selected customer not found");
+                ShowErrorMessage("Booking failed");
             }
         }
+        catch (Exception ex)
+            {
+            ShowErrorMessage($"Error while renting vehicle: {ex.Message}");
+            }
+            finally
+            {
+            await Task.Delay(5000);
+            isTaskDelayInProgress = false;
+            StateHasChanged();
+        }
+        }
+    else
+        {
+        ShowErrorMessage("Selected customer not found");
+        }
     }
+    }*/
+
+    private async Task RentVehicleAsync(int vehicleId)
+    {
+        if (vehicleId != 0 && bp.Customer.Id != 0)
+        {
+            try
+            {
+                isTaskDelayInProgress = true;
+                StateHasChanged();
+
+                var booking = await bp.RentVehicle(vehicleId, bp.Customer.Id);
+
+                if (booking != null)
+                {
+                    bp.Customer.Id = 0;
+                }
+                else
+                {
+                    ShowErrorMessage("Booking failed");
+                }
+            }
+            catch (Exception ex)
+            {
+                ShowErrorMessage($"Error while renting vehicle: {ex.Message}");
+            }
+            finally
+            {
+                await Task.Delay(5000);
+                isTaskDelayInProgress = false;
+                StateHasChanged();
+            }
+
+        }
+        else
+        {
+            ShowErrorMessage("Selected customer not found");
+        }
+    }
+
 
     private void ReturnVehicle(int vehicleId, int? distance)
     {
@@ -240,8 +272,8 @@
             {
                 try
                 {
-                    b.ReturnVehicle(vehicleId, distance.Value);
-                    Distance = null;
+                    bp.ReturnVehicle(vehicleId, distance.Value);
+                    bp.Booking.Distance = null;
                 }
                 catch (Exception ex)
                 {
@@ -254,22 +286,4 @@
             }
         }
     }
-
-
-    /*private void AddVehicleToData()
-    {
-        if (!string.IsNullOrWhiteSpace(b.Vehicle.RegNo) && !string.IsNullOrWhiteSpace(b.Vehicle.Make) && b.Vehicle.Odometer.HasValue && b.Vehicle.CostKm.HasValue && !string.IsNullOrEmpty(b.Vehicle.VehicleType.ToString()))
-        {
-            var vehicleTypeEnum = b.GetVehicleType(b.Vehicle.VehicleType.ToString());
-            b.AddVehicle(b.Vehicle.RegNo, b.Vehicle.Make, (int)b.Vehicle.Odometer.Value, b.Vehicle.CostKm.Value, vehicleTypeEnum);
-
-            b.Vehicle.RegNo = "";
-            b.Vehicle.Make = "";
-            b.Vehicle.Odometer = null;
-            b.Vehicle.CostKm = null;
-            b.Vehicle.VehicleType = default;
-        }
-
-    }*/
-
 }

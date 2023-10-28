@@ -17,11 +17,11 @@ public class BookingProcessor
 
     Vehicle v = new();
     Customer c = new();
-    //Booking b = new();
+    Booking b = new();
 
     public Vehicle Vehicle => v;
     public Customer Customer => c;
-    
+    public Booking Booking => b;
 
 
     public IEnumerable<T> GetItems<T>(Expression<Func<T, bool>>? expression = null) //where T : class
@@ -136,6 +136,35 @@ public class BookingProcessor
         }
     }
 
+    public void AddCustomer()
+    {
+        if (this.Customer.SocialSecurityNumber != null && this.Customer.FirstName != null && this.Customer.LastName != null)
+        {
+
+            int nextPersonId = _data.NextPersonId;
+            IPerson? customer = new Customer(default, this.Customer.SocialSecurityNumber, this.Customer.FirstName, this.Customer.LastName)
+            {
+                Id = nextPersonId
+            };
+            AddItem(customer);
+
+            this.Customer.SocialSecurityNumber = "";
+            this.Customer.FirstName = "";
+            this.Customer.LastName = "";
+         
+        }
+    }
+
+    public string[] VehicleBookingStatusNames => _data.VehicleBookingStatusNames;
+    public string[] VehicleStatusNames => _data.VehicleStatusNames;
+    public string[] VehicleTypeNames => _data.VehicleTypeNames; 
+    public VehicleTypes GetVehicleType(string name) => _data.GetVehicleType(name);
+    
+    //public VehicleTypes[] GetVehicleTypes()
+    //{
+    //    return Enum.GetValues(typeof(VehicleTypes)).Cast<VehicleTypes>().ToArray();
+    //}
+
     /*public void AddVehicle(string regNo, string make, int odometer, double costKm, VehicleTypes vehicleType)
     {
         int nextVehicleId = _data.NextVehicleId;
@@ -166,34 +195,4 @@ public class BookingProcessor
         AddItem(vehicle);
 
     }*/
-
-    public void AddCustomer()
-    {
-        if (this.Customer.SocialSecurityNumber != null && this.Customer.FirstName != null && this.Customer.LastName != null)
-        {
-
-            int nextPersonId = _data.NextPersonId;
-            IPerson? customer = new Customer(default, this.Customer.SocialSecurityNumber, this.Customer.FirstName, this.Customer.LastName)
-            {
-                Id = nextPersonId
-            };
-            AddItem(customer);
-
-            this.Customer.SocialSecurityNumber = "";
-            this.Customer.FirstName = "";
-            this.Customer.LastName = "";
-         
-        }
-    }
-
-    public string[] VehicleBookingStatusNames => _data.VehicleBookingStatusNames;
-    public string[] VehicleStatusNames => _data.VehicleStatusNames;
-    public string[] VehicleTypeNames => _data.VehicleTypeNames; 
-    public VehicleTypes GetVehicleType(string name) => _data.GetVehicleType(name);
-    
-    public VehicleTypes[] GetVehicleTypes()
-    {
-        return Enum.GetValues(typeof(VehicleTypes)).Cast<VehicleTypes>().ToArray();
-    }
-
 }
