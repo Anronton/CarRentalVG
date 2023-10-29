@@ -9,7 +9,7 @@ namespace CarRental.Business.Classes;
 public class BookingProcessor
 {
     private readonly IData _data;
-    
+
     public BookingProcessor(IData data)
     {
         _data = data;
@@ -22,6 +22,10 @@ public class BookingProcessor
     public Vehicle Vehicle => v;
     public Customer Customer => c;
     public Booking Booking => b;
+
+    public bool IsTaskDelayInProgress { get; private set; } = false;
+
+
 
 
     public IEnumerable<T> GetItems<T>(Expression<Func<T, bool>>? expression = null) //where T : class
@@ -65,7 +69,7 @@ public class BookingProcessor
         return vehicles.FirstOrDefault();
     }
 
-    public async Task<IBooking?> RentVehicle(int vehicleId, int customerId)
+    /*public async Task<IBooking?> RentVehicle(int vehicleId, int customerId)
     {
         try
         {
@@ -91,9 +95,90 @@ public class BookingProcessor
         {
              throw new Exception("Rental failed", ex);
         }
+    }*/
+
+    public async Task<IBooking?> RentVehicle(int vehicleId, int customerId)
+    {
+        try
+        {
+            if (vehicleId != 0 && customerId != 0)
+            {
+                IsTaskDelayInProgress = true;
+                
+                var vehicleTask = Task.Run(() => GetVehicle(vehicleId));
+                var customerTask = Task.Run(() => GetPerson(customerId));
+
+                var vehicle = await vehicleTask;
+                var customer = await customerTask;
+
+                if (vehicle != null && customer != null)
+                {
+                    var initialOdometer = vehicle.Odometer;
+
+                    var booking = new Booking(vehicle, customer, (int)initialOdometer, DateTime.Now, VehicleBookingStatuses.Open);
+                    vehicle.VehicleStatus = VehicleStatuses.Booked;
+
+                    await Task.Delay(5000);
+
+                    AddItem(booking);
+                    Customer.Id = 0;
+
+                    return booking;
+                }
+                else
+                {
+                    throw new Exception("Booking failed");
+                }
+            }
+            else
+            {
+                throw new Exception("Selected customer not found");
+            }
+        }
+        catch (Exception ex)
+        {
+            throw new Exception($"Error while renting vehicle: {ex.Message}");
+        }
+        finally
+        {
+            IsTaskDelayInProgress = false;
+        }
+        return null;
     }
 
-    public void ReturnVehicle(int vehicleId, int distance)
+    public void ReturnVehicle(int vehicleId, int? distance = null)
+    {
+        var booking = GetBookingByVehicleId(vehicleId) ?? throw new Exception("Booking not found");
+        var vehicle = GetVehicle(vehicleId) ?? throw new Exception("Vehicle not found");
+
+        if (booking.VehicleBookingStatus == VehicleBookingStatuses.Open)
+        {
+            if (distance.HasValue)
+            {
+                booking.VehicleBookingStatus = VehicleBookingStatuses.Closed;
+                vehicle.VehicleStatus = VehicleStatuses.Available;
+                vehicle.Odometer += distance;
+                booking.ReturnDate = DateTime.Now;
+                booking.Distance = distance.Value;
+
+                double dayCost = vehicle.DayCost();
+                booking.CalculateTotalCost(dayCost, vehicle.CostKm);
+
+                Booking.Distance = null;
+            }
+            else
+            {
+                throw new Exception("Please enter a valid distance before returning the vehicle.");
+            }
+        }
+        else
+        {
+            throw new Exception("Booking is not open and cannot be returned.");
+        }
+
+    }
+
+    /*public void ReturnVehicle(int vehicleId, int distance)
     {
         var booking = GetBookingByVehicleId(vehicleId) ?? throw new Exception("Booking not found");
         var vehicle = GetVehicle(vehicleId) ?? throw new Exception("Vehicle not found");
@@ -114,7 +199,7 @@ public class BookingProcessor
             throw new Exception("Booking is not open and cannot be returned.");
         }
 
-    }
+    }*/
 
     public void AddVehicle()
     {
