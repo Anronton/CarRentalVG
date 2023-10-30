@@ -45,8 +45,6 @@ public class CollectionData : IData
         }
     }
 
-
-
     public IBooking? RentVehicle(int vehicleId, int customerId)
     {
         IVehicle? vehicle = _vehicles.SingleOrDefault(v => v.Id == vehicleId);
@@ -127,64 +125,6 @@ public class CollectionData : IData
             _bookings.Add(booking);
         }
     }
-
-    /*public List<T> Get<T>(Expression<Func<T, bool>>? expression) // tänk över Expression, jonas använder inte den, det har med laddningstid/kompilering att göra, mest praktiskt med väldigt mycket kod, reflektera över det!
-    {
-        if (typeof(T) == typeof(IPerson))
-        {
-            if (expression != null)
-            {
-                return _persons.OfType<T>().Where(expression.Compile()).ToList();
-            }
-            return _persons.OfType<T>().ToList();
-        }
-        else if (typeof(T) == typeof(IVehicle))
-        {
-            if (expression != null)
-            {
-                return _vehicles.OfType<T>().Where(expression.Compile()).ToList();
-            }
-            return _vehicles.OfType<T>().ToList();
-        }
-        else if (typeof(T) == typeof(IBooking))
-        {
-            if (expression != null)
-            {
-                return _bookings.OfType<T>().Where(expression.Compile()).ToList();
-            }
-            return _bookings.OfType<T>().ToList();
-        }
-        return new List<T>();
-    }*/
-
-    /*public T? Single<T>(Expression<Func<T, bool>>? expression) // tänk över Expression, jonas använder inte den.
-    {
-        if (typeof(T) == typeof(IPerson))
-        {
-            if (expression != null)
-            {
-                return _persons.OfType<T>().SingleOrDefault(expression.Compile());
-            }
-            return default;
-        }
-        else if (typeof(T) == typeof(IVehicle))
-        {
-            if (expression != null)
-            {
-                return _vehicles.OfType<T>().SingleOrDefault(expression.Compile());
-            }
-            return default;
-        }
-        else if (typeof(T) == typeof(IBooking))
-        {
-            if (expression != null)
-            {
-                return _bookings.OfType<T>().SingleOrDefault(expression.Compile());
-            }
-            return default;
-        }
-        return default;
-    }*/
 
     public IEnumerable<IVehicle> GetVehicles(VehicleStatuses status = default)
     {

@@ -1,5 +1,5 @@
-﻿using CarRental.Common.Classes; // ph
-using CarRental.Common.Enums; // ph
+﻿using CarRental.Common.Classes;
+using CarRental.Common.Enums;
 using CarRental.Common.Extensions;
 using CarRental.Common.Interfaces;
 using System.Linq.Expressions;
@@ -24,8 +24,7 @@ public class BookingProcessor
     public Booking Booking => b;
 
     public bool IsTaskDelayInProgress { get; private set; } = false;
-
-
+    public string ErrorMessage { get; private set; } = "";
 
 
     public IEnumerable<T> GetItems<T>(Expression<Func<T, bool>>? expression = null) //where T : class
@@ -69,33 +68,6 @@ public class BookingProcessor
         return vehicles.FirstOrDefault();
     }
 
-    /*public async Task<IBooking?> RentVehicle(int vehicleId, int customerId)
-    {
-        try
-        {
-            var vehicle = await Task.Run(() => GetVehicle(vehicleId));
-            var customer = await Task.Run(() => GetPerson(customerId));
-
-            if (vehicle != null && customer != null)
-            {
-                var initialOdometer = vehicle.Odometer;
-
-                var booking = new Booking(vehicle, customer, (int)initialOdometer, DateTime.Now, VehicleBookingStatuses.Open);
-                vehicle.VehicleStatus = VehicleStatuses.Booked;
-
-                await Task.Delay(5000);
-
-                AddItem(booking);
-                return booking;
-            }
-
-            return null;
-        }
-        catch (Exception ex)
-        {
-             throw new Exception("Rental failed", ex);
-        }
-    }*/
 
     public async Task<IBooking?> RentVehicle(int vehicleId, int customerId)
     {
@@ -122,103 +94,106 @@ public class BookingProcessor
 
                     AddItem(booking);
                     Customer.Id = 0;
+                    ErrorMessage = "";
 
                     return booking;
                 }
                 else
                 {
+                    ErrorMessage = "Booking failed";
+                    return null;
                     throw new Exception("Booking failed");
                 }
             }
             else
             {
-                throw new Exception("Selected customer not found");
+                ErrorMessage = "Please select a customer";
+                return null;
+                throw new Exception("Please select a customer");
             }
         }
         catch (Exception ex)
         {
+            ErrorMessage = $"Error while renting vehicle: {ex.Message}";
+            return null;
             throw new Exception($"Error while renting vehicle: {ex.Message}");
         }
         finally
         {
             IsTaskDelayInProgress = false;
         }
-        return null;
     }
 
     public void ReturnVehicle(int vehicleId, int? distance = null)
     {
-        var booking = GetBookingByVehicleId(vehicleId) ?? throw new Exception("Booking not found");
-        var vehicle = GetVehicle(vehicleId) ?? throw new Exception("Vehicle not found");
-
-        if (booking.VehicleBookingStatus == VehicleBookingStatuses.Open)
+        try
         {
-            if (distance.HasValue)
+            var booking = GetBookingByVehicleId(vehicleId) ?? throw new Exception("Booking not found");
+            var vehicle = GetVehicle(vehicleId) ?? throw new Exception("Vehicle not found");
+
+            if (booking.VehicleBookingStatus == VehicleBookingStatuses.Open)
             {
-                booking.VehicleBookingStatus = VehicleBookingStatuses.Closed;
-                vehicle.VehicleStatus = VehicleStatuses.Available;
-                vehicle.Odometer += distance;
-                booking.ReturnDate = DateTime.Now;
-                booking.Distance = distance.Value;
+                if (distance.HasValue && distance.Value >= 0)
+                {
+                    booking.VehicleBookingStatus = VehicleBookingStatuses.Closed;
+                    vehicle.VehicleStatus = VehicleStatuses.Available;
+                    vehicle.Odometer += distance;
+                    booking.ReturnDate = DateTime.Now;
+                    booking.Distance = distance.Value;
 
-                double dayCost = vehicle.DayCost();
-                booking.CalculateTotalCost(dayCost, vehicle.CostKm);
+                    double dayCost = vehicle.DayCost();
+                    booking.CalculateTotalCost(dayCost, vehicle.CostKm);
 
-                Booking.Distance = null;
+                    Booking.Distance = null;
+                    ErrorMessage = "";
+                }
+                else
+                {
+                    ErrorMessage = "Please enter a valid distance before returning the vehicle.";
+                    throw new Exception("Please enter a valid distance before returning the vehicle.");
+                }
             }
             else
             {
-                throw new Exception("Please enter a valid distance before returning the vehicle.");
+                ErrorMessage = "Booking is not open and cannot be returned.";
+                throw new Exception("Booking is not open and cannot be returned.");
             }
         }
-        else
+        catch (Exception ex)
         {
-            throw new Exception("Booking is not open and cannot be returned.");
+            ErrorMessage = ex.Message;
+            return;
         }
-
     }
-
-    /*public void ReturnVehicle(int vehicleId, int distance)
-    {
-        var booking = GetBookingByVehicleId(vehicleId) ?? throw new Exception("Booking not found");
-        var vehicle = GetVehicle(vehicleId) ?? throw new Exception("Vehicle not found");
-
-        if (booking.VehicleBookingStatus == VehicleBookingStatuses.Open)
-        {
-            booking.VehicleBookingStatus = VehicleBookingStatuses.Closed;
-            vehicle.VehicleStatus = VehicleStatuses.Available;
-            vehicle.Odometer += distance;
-            booking.ReturnDate = DateTime.Now;
-            booking.Distance = distance;
-
-            double dayCost = vehicle.DayCost();
-            booking.CalculateTotalCost(dayCost, vehicle.CostKm);
-        }
-        else
-        {
-            throw new Exception("Booking is not open and cannot be returned.");
-        }
-
-    }*/
 
     public void AddVehicle()
     {
-        if (!string.IsNullOrWhiteSpace(this.Vehicle.RegNo) && !string.IsNullOrWhiteSpace(this.Vehicle.Make) && this.Vehicle.Odometer.HasValue && this.Vehicle.CostKm.HasValue && !string.IsNullOrEmpty(this.Vehicle.VehicleType.ToString()))
-        {
-            var vehicleTypeEnum = GetVehicleType(this.Vehicle.VehicleType.ToString());
-            int nextVehicleId = _data.NextVehicleId;
-            IVehicle vehicle = new Vehicle(default, this.Vehicle.RegNo, this.Vehicle.Make, (int)this.Vehicle.Odometer.Value, this.Vehicle.CostKm.Value, vehicleTypeEnum, VehicleStatuses.Available)
+            if (!string.IsNullOrWhiteSpace(this.Vehicle.RegNo) 
+                && !string.IsNullOrWhiteSpace(this.Vehicle.Make)
+                && this.Vehicle.Odometer.HasValue && this.Vehicle.Odometer >= 0
+                && this.Vehicle.CostKm.HasValue && this.Vehicle.CostKm >= 0
+                && !string.IsNullOrEmpty(this.Vehicle.VehicleType.ToString())
+                )
             {
-                Id = nextVehicleId,
-            };
-            AddItem(vehicle);
+                var vehicleTypeEnum = GetVehicleType(this.Vehicle.VehicleType.ToString());
+                int nextVehicleId = _data.NextVehicleId;
+                IVehicle vehicle = new Vehicle(default, this.Vehicle.RegNo, this.Vehicle.Make, (int)this.Vehicle.Odometer.Value, this.Vehicle.CostKm.Value, vehicleTypeEnum, VehicleStatuses.Available)
+                {
+                    Id = nextVehicleId,
+                };
+                AddItem(vehicle);
+                ErrorMessage = "";
 
-            this.Vehicle.RegNo = "";
-            this.Vehicle.Make = "";
-            this.Vehicle.Odometer = null;
-            this.Vehicle.CostKm = null;
-            this.Vehicle.VehicleType = default;
-        }
+                this.Vehicle.RegNo = "";
+                this.Vehicle.Make = "";
+                this.Vehicle.Odometer = null;
+                this.Vehicle.CostKm = null;
+                this.Vehicle.VehicleType = default;
+            }
+            else
+            {
+                ErrorMessage = "Please fill in all required fields with valid values for adding a vehicle.";
+            }
     }
 
     public void AddCustomer()
@@ -232,11 +207,15 @@ public class BookingProcessor
                 Id = nextPersonId
             };
             AddItem(customer);
+            ErrorMessage = "";
 
             this.Customer.SocialSecurityNumber = "";
             this.Customer.FirstName = "";
             this.Customer.LastName = "";
-         
+        }
+        else
+        {
+            ErrorMessage = "Please fill in all required fields for adding a customer.";
         }
     }
 
@@ -245,39 +224,4 @@ public class BookingProcessor
     public string[] VehicleTypeNames => _data.VehicleTypeNames; 
     public VehicleTypes GetVehicleType(string name) => _data.GetVehicleType(name);
     
-    //public VehicleTypes[] GetVehicleTypes()
-    //{
-    //    return Enum.GetValues(typeof(VehicleTypes)).Cast<VehicleTypes>().ToArray();
-    //}
-
-    /*public void AddVehicle(string regNo, string make, int odometer, double costKm, VehicleTypes vehicleType)
-    {
-        int nextVehicleId = _data.NextVehicleId;
-        IVehicle? vehicle;
-
-        if (vehicleType == VehicleTypes.Sedan)
-        {
-            vehicle = new Vehicle(default, regNo, make, odometer, costKm, VehicleTypes.Sedan, VehicleStatuses.Available);
-        }
-        else if (vehicleType == VehicleTypes.Combi)
-        {
-            vehicle = new Vehicle(default, regNo, make, odometer, costKm, VehicleTypes.Combi, VehicleStatuses.Available);
-        }
-        else if (vehicleType == VehicleTypes.Van)
-        {
-            vehicle = new Vehicle(default, regNo, make, odometer, costKm, VehicleTypes.Van, VehicleStatuses.Available);
-        }
-        else if (vehicleType == VehicleTypes.Motorcycle)
-        {
-            vehicle = new Vehicle(default, regNo, make, odometer, costKm, VehicleTypes.Motorcycle, VehicleStatuses.Available);
-        }
-        else
-        {
-            throw new Exception("Not a valid vehicle type");
-        }
-
-        vehicle.Id = nextVehicleId;
-        AddItem(vehicle);
-
-    }*/
 }
