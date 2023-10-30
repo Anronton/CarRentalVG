@@ -6,13 +6,21 @@
 
 <PageTitle>Car Rental</PageTitle>
 
-<h1 class="display-4">Car Rental</h1>
 
-<div class="alert alert-danger" role="alert" style="display: @(string.IsNullOrEmpty(bp.ErrorMessage) ? "none" : "block")">
-    @bp.ErrorMessage
-</div>
+ <div class="d-flex">
+    <h1 class="display-4">Car Rental</h1>
+    <div class="d-flex justify-content-start align-items-center">
+        
+        @if (!string.IsNullOrEmpty(bp.ErrorMessage))
+        {
+            <div class="alert alert-danger mx-lg-5" role="alert">
+                @bp.ErrorMessage
+            </div>
+        }
+    </div>
+</div>  
 
-<div>
+<div class="col-12">
     <div class="heading-font display-6">Vehicles</div>
     <table class="table border">
         <thead>
@@ -97,7 +105,6 @@
         </tbody>
     </table>
 </div>
-
 
 <div class="col-9">
     <div class="heading-font display-6">Bookings</div>

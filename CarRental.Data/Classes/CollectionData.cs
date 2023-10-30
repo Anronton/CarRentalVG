@@ -66,7 +66,7 @@ public class CollectionData : IData
             }
             else
             {
-                throw new Exception("Vehicle not available for rent");
+                throw new Exception("Vehicle not available for Renting/booking");
             }
         }
         return null;
@@ -97,12 +97,11 @@ public class CollectionData : IData
 
                     return booking;
                 }
-                else throw new Exception("Booking not found");
+                else throw new Exception("Booking not found.");
             }
             else {
-                throw new Exception();
+                throw new Exception("Vehicle is not booked and cannot be returned.");
             }
-            
         }
         return null;
     }

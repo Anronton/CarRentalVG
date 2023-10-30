@@ -68,7 +68,6 @@ public class BookingProcessor
         return vehicles.FirstOrDefault();
     }
 
-
     public async Task<IBooking?> RentVehicle(int vehicleId, int customerId)
     {
         try
@@ -102,32 +101,25 @@ public class BookingProcessor
                 else
                 {
                     ErrorMessage = "Booking failed";
-                    return null;
-                    throw new Exception("Booking failed");
                 }
             }
             else
             {
                 ErrorMessage = "Please select a customer";
-                return null;
-                throw new Exception("Please select a customer");
             }
         }
         catch (Exception ex)
         {
             ErrorMessage = $"Error while renting vehicle: {ex.Message}";
-            return null;
-            throw new Exception($"Error while renting vehicle: {ex.Message}");
         }
         finally
         {
             IsTaskDelayInProgress = false;
         }
+        return null;
     }
 
-    
-
-    public void ReturnVehicle(int vehicleId, int? distance = null)
+    public void ReturnVehicle(int vehicleId, int? distance)
     {
         try
         {
@@ -140,7 +132,7 @@ public class BookingProcessor
                 {
                     booking.VehicleBookingStatus = VehicleBookingStatuses.Closed;
                     vehicle.VehicleStatus = VehicleStatuses.Available;
-                    vehicle.Odometer += distance;
+                    vehicle.Odometer += distance.Value;
                     booking.ReturnDate = DateTime.Now;
                     booking.Distance = distance.Value;
 
@@ -153,19 +145,16 @@ public class BookingProcessor
                 else
                 {
                     ErrorMessage = "Please enter a valid distance before returning the vehicle.";
-                    throw new Exception("Please enter a valid distance before returning the vehicle.");
                 }
             }
             else
             {
                 ErrorMessage = "Booking is not open and cannot be returned.";
-                throw new Exception("Booking is not open and cannot be returned.");
             }
         }
         catch (Exception ex)
         {
             ErrorMessage = ex.Message;
-            return;
         }
     }
 
@@ -223,8 +212,8 @@ public class BookingProcessor
         }
     }
 
-    public string[] VehicleBookingStatusNames => _data.VehicleBookingStatusNames;
-    public string[] VehicleStatusNames => _data.VehicleStatusNames;
+    //public string[] VehicleBookingStatusNames => _data.VehicleBookingStatusNames;
+    //public string[] VehicleStatusNames => _data.VehicleStatusNames;
     public string[] VehicleTypeNames => _data.VehicleTypeNames; 
     public VehicleTypes GetVehicleType(string name) => _data.GetVehicleType(name);
     
