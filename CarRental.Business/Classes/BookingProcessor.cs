@@ -92,6 +92,7 @@ public class BookingProcessor
 
                     await Task.Delay(5000);
 
+
                     AddItem(booking);
                     Customer.Id = 0;
                     ErrorMessage = "";
@@ -123,6 +124,8 @@ public class BookingProcessor
             IsTaskDelayInProgress = false;
         }
     }
+
+    
 
     public void ReturnVehicle(int vehicleId, int? distance = null)
     {
@@ -198,9 +201,10 @@ public class BookingProcessor
 
     public void AddCustomer()
     {
-        if (this.Customer.SocialSecurityNumber != null && this.Customer.FirstName != null && this.Customer.LastName != null)
+        if (!string.IsNullOrWhiteSpace(this.Customer.SocialSecurityNumber) && 
+            !string.IsNullOrWhiteSpace(this.Customer.FirstName) &&
+            !string.IsNullOrWhiteSpace(this.Customer.LastName))
         {
-
             int nextPersonId = _data.NextPersonId;
             IPerson? customer = new Customer(default, this.Customer.SocialSecurityNumber, this.Customer.FirstName, this.Customer.LastName)
             {
