@@ -6,22 +6,21 @@
 
 <PageTitle>Car Rental</PageTitle>
 
+<h1 class="display-5">Car Rental</h1>
+ 
 
- <div class="d-flex">
-    <h1 class="display-4">Car Rental</h1>
-    <div class="d-flex justify-content-start align-items-center">
-        
-        @if (!string.IsNullOrEmpty(bp.ErrorMessage))
-        {
-            <div class="alert alert-danger mx-lg-5" role="alert">
-                @bp.ErrorMessage
-            </div>
-        }
+<div class="col-11">
+    <div class="d-flex align-items-end justify-content-between">
+        <div class="heading-font display-6">Vehicles</div>
+        <div class="d-flex align-items-center">
+            @if (!string.IsNullOrEmpty(bp.ErrorMessage))
+            {
+                <div class="alert alert-danger m-lg-auto" role="alert" style="height: 54px;">                  
+                        @bp.ErrorMessage
+                </div>
+            }
+        </div>
     </div>
-</div>  
-
-<div class="col-12">
-    <div class="heading-font display-6">Vehicles</div>
     <table class="table border">
         <thead>
             <tr>
@@ -51,7 +50,7 @@
                     </select>
                 </td>
                 <td></td>
-                <td><button @onclick="bp.AddVehicle" class="btn btn-sm btn-outline-success" disabled="@bp.IsTaskDelayInProgress">Add</button></td>
+                <td><button @onclick="bp.AddVehicle" class="btn btn-outline-success" disabled="@bp.IsTaskDelayInProgress">Add</button></td>
                 <td></td>
                 <td>
                     @if (bp.IsTaskDelayInProgress)
@@ -89,11 +88,11 @@
                     <td>
                         @if (vehicle.VehicleStatus == Common.Enums.VehicleStatuses.Available)
                         {
-                            <button @onclick="() => bp.RentVehicle(vehicle.Id, bp.Customer.Id)" class="btn btn-sm btn-outline-primary" disabled="@bp.IsTaskDelayInProgress">Rent</button>
+                            <button @onclick="() => bp.RentVehicle(vehicle.Id, bp.Customer.Id)" class="btn btn-outline-primary" disabled="@bp.IsTaskDelayInProgress">Rent</button>
                         }
                         @if (vehicle.VehicleStatus == Common.Enums.VehicleStatuses.Booked)
                         {
-                            <button @onclick="() => bp.ReturnVehicle(vehicle.Id, bp.Booking.Distance)" class="btn btn-sm btn-outline-success" disabled="@bp.IsTaskDelayInProgress">Return</button>
+                            <button @onclick="() => bp.ReturnVehicle(vehicle.Id, bp.Booking.Distance)" class="btn btn-outline-success" disabled="@bp.IsTaskDelayInProgress">Return</button>
                         }
                     </td> 
 
@@ -106,7 +105,7 @@
     </table>
 </div>
 
-<div class="col-9">
+<div class="col-8">
     <div class="heading-font display-6">Bookings</div>
     <table class="table border border-secondary">
         <thead>
@@ -154,7 +153,7 @@
     </table>
 </div>
 
-<div class="col-6">
+<div class="col-5">
     <div class="heading-font display-6">Customers</div>
     <table class="table border border-secondary">
         <thead>
@@ -170,7 +169,7 @@
                 <td><input @bind="bp.Customer.SocialSecurityNumber" class="form-control" placeholder="SSN" /></td>
                 <td><input @bind="bp.Customer.LastName" class="form-control" placeholder="Last Name" /></td>
                 <td><input @bind="bp.Customer.FirstName" class="form-control" placeholder="First Name" /></td>
-                <td><button @onclick="bp.AddCustomer" class="btn btn-sm btn-outline-success">Add</button></td>
+                <td><button @onclick="bp.AddCustomer" class="btn btn-outline-success">Add</button></td>
             </tr>
             @foreach(var person in bp.GetPersons())
             {

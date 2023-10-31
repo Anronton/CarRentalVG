@@ -24,7 +24,7 @@ public class CollectionData : IData
     {
         //Customers
         _persons.Add(new Customer(1, "960321", "Jan", "Deg"));
-        _persons.Add(new Customer(2, "690101", "John", "Doe"));
+        _persons.Add(new Customer(2, "690101", "JSON", "Derulo"));
         _persons.Add(new Customer(3, "721111", "Jane", "Smith"));
 
         //Vehicles
