@@ -2,7 +2,7 @@
 
 public interface IPerson : IId
 {
-    public string SocialSecurityNumber { get; set; }
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
+    string SocialSecurityNumber { get; set; }
+    string FirstName { get; set; }
+    string LastName { get; set; }
 }

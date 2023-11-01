@@ -4,6 +4,7 @@ using CarRental.Common.Interfaces;
 using CarRental.Common.Extensions;
 using System.Linq.Expressions;
 using System.Reflection;
+using System.Security.Principal;
 
 namespace CarRental.Data.Classes;
 
@@ -106,7 +107,7 @@ public class CollectionData : IData
         return null;
     }
 
-    public void Add<T>(T item)
+    public void Add<T>(T item) where T : IId
     {
         if (item is IVehicle vehicle)
         {

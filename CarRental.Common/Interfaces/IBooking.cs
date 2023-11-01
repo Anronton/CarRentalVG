@@ -6,12 +6,12 @@ namespace CarRental.Common.Interfaces;
  public interface IBooking : IId
 {
     
-    public IVehicle Vehicle { get; init; }
-    public IPerson Person { get; init; }
-    public int Odometer { get; set; }
-    public int? Distance { get; set; }
-    public DateTime BookingDate { get; set; }
-    public DateTime? ReturnDate { get; set; }
-    public double? TotalCost { get; set; }
-    public VehicleBookingStatuses VehicleBookingStatus { get; set; }
+    IVehicle Vehicle { get; init; }
+    IPerson Person { get; init; }
+    int Odometer { get; set; }
+    int? Distance { get; set; }
+    DateTime BookingDate { get; set; }
+    DateTime? ReturnDate { get; set; }
+    double? TotalCost { get; set; }
+    VehicleBookingStatuses VehicleBookingStatus { get; set; }
 }

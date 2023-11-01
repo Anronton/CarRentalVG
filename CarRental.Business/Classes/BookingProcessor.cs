@@ -15,24 +15,20 @@ public class BookingProcessor
         _data = data;
     }
 
-    Vehicle v = new();
-    Customer c = new();
-    Booking b = new();
-
-    public Vehicle Vehicle => v;
-    public Customer Customer => c;
-    public Booking Booking => b;
+    public Vehicle Vehicle { get; } = new();
+    public Customer Customer { get; } = new();
+    public Booking Booking { get; } = new();
 
     public bool IsTaskDelayInProgress { get; private set; } = false;
     public string ErrorMessage { get; private set; } = "";
 
 
-    public IEnumerable<T> GetItems<T>(Expression<Func<T, bool>>? expression = null) //where T : class
+    public IEnumerable<T> GetItems<T>(Expression<Func<T, bool>>? expression = null)
     {
         return _data.Get(expression);
     }
 
-    public void AddItem<T>(T item) //where T : class
+    public void AddItem<T>(T item) where T : IId
     {
         _data.Add(item);
     }
