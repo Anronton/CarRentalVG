@@ -15,8 +15,8 @@ public class CollectionData : IData
     readonly List<IBooking> _bookings = new();
 
    
-    public int NextVehicleId => _vehicles.Count.Equals(0) ? 1 : _vehicles.Max(b => b.Id) + 1;
-    public int NextPersonId => _persons.Count.Equals(0) ? 1 : _persons.Max(b => b.Id) + 1;
+    public int NextVehicleId => _vehicles.Count.Equals(0) ? 1 : _vehicles.Max(v => v.Id) + 1;
+    public int NextPersonId => _persons.Count.Equals(0) ? 1 : _persons.Max(p => p.Id) + 1;
     public int NextBookingId => _bookings.Count.Equals(0) ? 1 : _bookings.Max(b => b.Id) + 1;
 
     public CollectionData() => SeedData();
@@ -109,21 +109,44 @@ public class CollectionData : IData
 
     public void Add<T>(T item) where T : IId
     {
-        if (item is IVehicle vehicle)
+        if (item != null)
         {
-            vehicle.Id = NextVehicleId;
-            _vehicles.Add(vehicle);
+
+            item.Id = GetNextId<T>();
+        
+            if (item is IVehicle)
+            {
+                _vehicles.Add((IVehicle)item);
+            }
+            if (item is IPerson)
+            {
+                _persons.Add((IPerson)item);
+            }
+            else if (item is IBooking)
+            {
+                _bookings.Add((IBooking)item);
+            }
         }
-        if (item is IPerson person)
+    }
+
+    private int GetNextId<T>() where T : IId
+    {
+        int maxId = 0;
+
+        if (typeof(T) == typeof(IVehicle))
         {
-            person.Id = NextPersonId;
-            _persons.Add(person);
+            maxId = _vehicles.Count > 0 ? _vehicles.Max(v => v.Id) : 0;
         }
-        if (item is IBooking booking)
+        else if (typeof(T) == typeof(IPerson))
         {
-            booking.Id = NextBookingId;
-            _bookings.Add(booking);
+            maxId = _persons.Count > 0 ? _persons.Max(p => p.Id) : 0;
         }
+        else if (typeof(T) == typeof(IBooking))
+        {
+            maxId = _bookings.Count > 0 ? _bookings.Max(b => b.Id) : 0;
+        }
+
+        return maxId + 1;
     }
 
     public IEnumerable<IVehicle> GetVehicles(VehicleStatuses status = default)

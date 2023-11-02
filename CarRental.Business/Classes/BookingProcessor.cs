@@ -71,7 +71,7 @@ public class BookingProcessor
             if (vehicleId != 0 && customerId != 0)
             {
                 IsTaskDelayInProgress = true;
-                
+
                 var vehicleTask = Task.Run(() => GetVehicle(vehicleId));
                 var customerTask = Task.Run(() => GetPerson(customerId));
 
